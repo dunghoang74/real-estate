@@ -3,10 +3,14 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const server = express();
 const db = require('./db');
-// const leadRoutes = require('./api/routes/leadRoutes');
-// const userRoutes = require('./api/routes/userRoutes');
+const userRoutes = require('./api/routes/userRoutes');
+const propertyRoutes = require('./api/routes/propertyRoutes');
+const propertyUnitRoutes = require('./api/routes/propertyUnitRoutes');
+const categoryRoutes = require('./api/routes/categoryRoutes');
+const notificationRoutes = require('./api/routes/notificationRoutes');
+
 const port = process.env.PORT || 3040;
-const LeadModel = require('./api/models/leadModel');
+// const LeadModel = require('./api/models/leadModel');
 
 const faker = require('faker');
 
@@ -59,12 +63,13 @@ server.use(function (req, res, next) {
 });
 
 server.use(cookieParser());
-// server.use('/api/lead', leadRoutes);
-// server.use('/api/user', userRoutes);
+server.use('/api/user', userRoutes);
+server.use('/api/property', propertyRoutes);
+server.use('/api/property_unit', propertyUnitRoutes);
+server.use('/api/category', categoryRoutes);
+server.use('/api/notification', notificationRoutes);
 
-db.connectTo()
-    .then(() => console.log('\n... API Connected to Database ...\n'))
-    .catch(err => console.log('\n*** ERROR Connecting to Database ***\n', err));
+db.connectTo();
 
 
 server.listen(port, () => {

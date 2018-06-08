@@ -62,3 +62,5 @@ typings/
 
 config.js
 package-lock.json
+app/src/config.js
+app/node_modules/
