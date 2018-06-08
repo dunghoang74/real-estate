@@ -4,6 +4,8 @@ const { requireAuth, getTokenForUser } = require('../service/auth');
 const createUser = (req, res, next) => {
     const user = new UserModel(req.body);
 
+    console.log('the user info to save:::',user);
+
     user.save()
         .then(user => {
             // send the JWT for quick auto sign_in
