@@ -8,8 +8,9 @@ const propertyRoutes = require('./api/routes/propertyRoutes');
 const propertyUnitRoutes = require('./api/routes/propertyUnitRoutes');
 const categoryRoutes = require('./api/routes/categoryRoutes');
 const notificationRoutes = require('./api/routes/notificationRoutes');
+const config = require('./config');
 
-const port = process.env.PORT || 3040;
+const port = process.env.PORT || config.port_to_listen;
 // const LeadModel = require('./api/models/leadModel');
 
 const faker = require('faker');
