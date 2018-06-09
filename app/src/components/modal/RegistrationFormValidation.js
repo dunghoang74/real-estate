@@ -36,22 +36,34 @@ class FormWIthSubmissionButton extends Component {
 				this.props.addUser(values);
 
 				setTimeout(() => { 
-					if(this.props.userRegistered){
+					if (localStorage.getItem('id_token') !== null){
+
 						Notification(
 							'success',
-							"Bienvenido/a " + values.username + 
-							'.      Lo estamos redireccionando...',
-						);
+							"Bienvenido/a " + values.username ,
+						);		
 					}
 				}, 300);
 
 				setTimeout(() => { 
 					if (localStorage.getItem('id_token') !== null){
-						window.location = "/dashboard/googlemap";
+						Notification(
+							'success',
+							"Lo estamos redireccionando...",
+						);
 					}
 				}, 2000);
 
+				setTimeout(() => { 
+					if (localStorage.getItem('id_token') !== null){
+
+						window.location = "/dashboard";
+
+					}
+				}, 3500);
+				
 			}
+			
 		});
 	};
 	handleConfirmBlur = e => {

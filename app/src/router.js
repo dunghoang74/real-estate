@@ -25,7 +25,6 @@ const RestrictedRoute = ({ component: Component, isLoggedIn, ...rest }) => (
   />
 );
 const PublicRoutes = ({ history, isLoggedIn }) => {
-  console.log('the history:::', history)
   return (
     <ConnectedRouter history={history}>
       <div>

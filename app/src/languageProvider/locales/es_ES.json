@@ -686,5 +686,6 @@
   "form.errormsg.phone_only_numbers": "Ingrese solo números!",
   "form.errormsg.match_password": "Las contraseñas no coinciden!",
   "form.close": "Cerrar",
+  "form.welcome": "Bienvenido/a",
   "form.welcome": "Bienvenido/a"
 }
