@@ -4,7 +4,7 @@ const { requireAuth, getTokenForUser } = require('../service/auth');
 const createUser = (req, res, next) => {
     const user = new UserModel(req.body);
 
-    console.log('the user info to save:::',user);
+    console.log('the user info to save:::', user);
 
     user.save()
         .then(user => {
@@ -28,6 +28,24 @@ const getUsers = (req, res) => {
         .populate('_properties')
         .then(resp => res.json(resp));
 
+};
+
+const checkAvalability = (req, res) => {
+    const userName = req.params.username;
+
+    UserModel.findOne({username:userName})
+        .populate()
+        .then(resp => res.json(resp));
+    
+};
+
+const checkEmailAvalability = (req, res) => {
+    const userEmail = req.params.email;
+
+    UserModel.findOne({email:userEmail})
+        .populate()
+        .then(resp => res.json(resp));
+    
 };
 
 const logOut = (req, res, next) => {
@@ -79,4 +97,4 @@ const signInUser = (req, res) => {
 
 };
 
-module.exports = {createUser, getUsers, signInUser, logOut};
+module.exports = {createUser, getUsers, signInUser, logOut, checkAvalability, checkEmailAvalability};

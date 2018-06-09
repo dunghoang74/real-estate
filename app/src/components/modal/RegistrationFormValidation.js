@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Input, Select } from 'antd';
+import { Input, Select, Modal } from 'antd';
 import Form from '../../components/uielements/form';
 import Checkbox from '../../components/uielements/checkbox';
-// import Notification from '../../components/notification';
+import Notification from '../../components/notification';
 import { Button, DropdownButton, ButtonToolbar, MenuItem } from 'react-bootstrap';
 import styled from "styled-components";
 import IntlMessages from '../../components/utility/intlMessages';
 import userActions from '../../redux/user/actions'
+import { call } from 'redux-saga/effects';
 
-
-const {addUser} = userActions;
+const {addUser, checkUserAvalability, checkUserEmailAvalability} = userActions;
 
 const FormItem = Form.Item;
 
@@ -19,6 +19,10 @@ class FormWIthSubmissionButton extends Component {
 		confirmDirty: false,
 		formType: 'search',
 	};
+
+	componentDidMount(){
+		console.log('the props::');
+	}
 
 	switchFormTo = (formToSwitch) =>{
 
@@ -30,6 +34,23 @@ class FormWIthSubmissionButton extends Component {
 		this.props.form.validateFieldsAndScroll((err, values) => {
 			if (!err) {
 				this.props.addUser(values);
+
+				setTimeout(() => { 
+					if(this.props.userRegistered){
+						Notification(
+							'success',
+							"Bienvenido/a " + values.username + 
+							'.      Lo estamos redireccionando...',
+						);
+					}
+				}, 300);
+
+				setTimeout(() => { 
+					if (localStorage.getItem('id_token') !== null){
+						window.location = "/dashboard/googlemap";
+					}
+				}, 2000);
+
 			}
 		});
 	};
@@ -40,7 +61,7 @@ class FormWIthSubmissionButton extends Component {
 	checkPassword = (rule, value, callback) => {
 		const form = this.props.form;
 		if (value && value !== form.getFieldValue('password')) {
-			callback('Two passwords that you enter is inconsistent!');
+			callback(<IntlMessages id='form.errormsg.match_password' />);
 		} else {
 			callback();
 		}
@@ -58,9 +79,8 @@ class FormWIthSubmissionButton extends Component {
 		if(!isNaN(parseFloat(value)) && isFinite(value)){
 			callback();
 		}else{
-			callback("Please the input only numbers");
+			callback(<IntlMessages id='form.errormsg.phone_only_numbers' />);
 		}
-		
 	};
 	checkUserType = (rule, value, callback) => {
 		const form = this.props.form;
@@ -69,16 +89,46 @@ class FormWIthSubmissionButton extends Component {
 		
 	};
 	checkUserName = (rule, value, callback) => {
+
+		if(value){
+			const form = this.props.form;
+			let newVal = value.toLowerCase().replace(/ /g,"_").replace( /[0-9]/g, '').replace(/[^-_a-zA-Z]/, "");
+			this.props.form.setFieldsValue({
+				username: newVal,
+			});
+
+			setTimeout(() => { 
+				let userVal = form.getFieldValue('username');
+				this.props.checkUserAvalability(userVal);
+
+				if(this.props.userAvailable){
+					callback();
+				}else{
+					callback(<IntlMessages id='form.errormsg.username_taken' />);
+				}
+
+			}, 500);
+		}else{
+			callback();
+		}
+
+	};
+	checkUserEmail = (rule, value, callback) => {
+
 		const form = this.props.form;
 
-		// check user avaliabiliti
-		callback();
+		setTimeout(() => { 
+			let userEmailVal = form.getFieldValue('email');
+			this.props.checkUserEmailAvalability(userEmailVal);
 
-	}
-	formatUsername = (e) =>{
+			if(this.props.userEmailAvailable){
+				callback();
+			}else{
+				callback(<IntlMessages id='form.errormsg.email_suscribed' />);
+			}
 
-		console.log(e.target.value);
-		return e.target.value.toUpperCase();
+		}, 800);
+
 	}
 
 	render() {
@@ -108,6 +158,7 @@ class FormWIthSubmissionButton extends Component {
 		};
 		return (
 			<RegistrationForm>
+				
 				<ButtonToolbar>
 					<Button bsStyle="primary" bsSize="large" className="btnsTop" onClick={() => {this.switchFormTo('search')}}>
 						<IntlMessages id="form.wantToSearch"/>
@@ -128,17 +179,17 @@ class FormWIthSubmissionButton extends Component {
 											validator: this.checkUserType,
 										},
 										{
-											message: 'Please select a option',
+										message: <IntlMessages id='form.errormsg.please_select_option' />,
 											required: true,
 										},
 									],
 								})(
 									<Select defaultValue="">
-										<Select.Option value="">Elige el tipo de usuario</Select.Option>
-										<Select.Option value="single_seller">Usuario Particular</Select.Option>
-										<Select.Option value="real_state">Inmobiliaria</Select.Option>
-										<Select.Option value="constructor">Contructora</Select.Option>
-										<Select.Option value="runner">Corredor</Select.Option>
+										<Select.Option value=""><IntlMessages id='form.drop.select_a_user_type' /></Select.Option>
+										<Select.Option value="single_seller"><IntlMessages id='form.drop.single_seller' /></Select.Option>
+										<Select.Option value="real_state"><IntlMessages id='form.drop.real_state' /></Select.Option>
+										<Select.Option value="constructor"><IntlMessages id='form.drop.constructor' /></Select.Option>
+										<Select.Option value="runner"><IntlMessages id='form.drop.runner' /></Select.Option>
 									</Select>
 								)}
 							</FormItem>
@@ -146,40 +197,45 @@ class FormWIthSubmissionButton extends Component {
 						
 						: ''
 					}
-
-					<FormItem {...formItemLayout} label="User Name" hasFeedback >
+					
+					<FormItem {...formItemLayout} label={<IntlMessages id='form.lable.username' />} hasFeedback>
 						{getFieldDecorator('username', {
 							rules: [
 								{
 									min:5,
-									message:'the username must be greater than 4'
+									message:<IntlMessages id='form.errormsg.username_greater' />
 								},
 								{
 									max:16,
-									message:'the username must be less than 15'
+									message:<IntlMessages id='form.errormsg.username_less' />
 								},
 								{
 									validator: this.checkUserName,
 								},
 								{
 									required: true,
-									message: 'Please input a User Name',
+									message: <IntlMessages id='form.errormsg.username' />,
 								},
 								
 							],
-						})(<Input name="username" id="userName" onBlur={this.formatUsername} />)}
+						})(
+						   <Input name="username" id="userName" />
+						)}
 					</FormItem>
 
-					<FormItem {...formItemLayout} label="E-mail" hasFeedback>
+					<FormItem {...formItemLayout} label={<IntlMessages id='form.lable.email' />} hasFeedback>
 						{getFieldDecorator('email', {
 							rules: [
 								{
+									validator: this.checkUserEmail,
+								},
+								{
 									type: 'email',
-									message: 'The input is not valid E-mail!',
+									message: <IntlMessages id='form.errormsg.valid_email' />,
 								},
 								{
 									required: true,
-									message: 'Please input your E-mail!',
+									message: <IntlMessages id='form.errormsg.email' />,
 								},
 							],
 						})(<Input name="email" id="email" />)}
@@ -187,7 +243,7 @@ class FormWIthSubmissionButton extends Component {
 
 					{(this.state.formType === 'post')
 						?
-							<FormItem {...formItemLayout} label="Phone" hasFeedback>
+							<FormItem {...formItemLayout} label={<IntlMessages id='form.lable.phone' />} hasFeedback>
 								{getFieldDecorator('phone', {
 									rules: [
 										{
@@ -195,7 +251,7 @@ class FormWIthSubmissionButton extends Component {
 										},
 										{
 											required: true,
-											message: 'Please input your Phone!',
+											message: <IntlMessages id='form.errormsg.phone' />,
 										},
 									],
 								})(<Input name="phone" id="phone" />)}
@@ -203,12 +259,12 @@ class FormWIthSubmissionButton extends Component {
 						: ''
 					}
 
-					<FormItem {...formItemLayout} label="Password" hasFeedback>
+					<FormItem {...formItemLayout} label={<IntlMessages id='form.lable.password' />} hasFeedback>
 						{getFieldDecorator('password', {
 							rules: [
 								{
 									required: true,
-									message: 'Please input your password!',
+									message: <IntlMessages id='form.errormsg.password' />,
 								},
 								{
 									validator: this.checkConfirm,
@@ -216,12 +272,12 @@ class FormWIthSubmissionButton extends Component {
 							],
 						})(<Input type="password" />)}
 					</FormItem>
-					<FormItem {...formItemLayout} label="Confirm Password" hasFeedback>
+					<FormItem {...formItemLayout} label={<IntlMessages id='form.lable.confirm_password' />} hasFeedback>
 						{getFieldDecorator('confirm', {
 							rules: [
 								{
 									required: true,
-									message: 'Please confirm your password!',
+									message: <IntlMessages id='form.errormsg.confimr_password' />,
 								},
 								{
 									validator: this.checkPassword,
@@ -234,13 +290,14 @@ class FormWIthSubmissionButton extends Component {
 							valuePropName: 'checked',
 							rules: [
 								{
-									message: 'Please confirm the temrms and Conditions',
+									message: <IntlMessages id='form.errormsg.terms' />,
 									required: true,
 								},
 							],
 						})(
 							<Checkbox>
-								I have read the <a href="">agreement</a>
+								<IntlMessages id='form.message.agreement' />  
+								<a href=""> <IntlMessages id='form.agreement' /></a>
 							</Checkbox>
 						)}
 					</FormItem>
@@ -260,8 +317,10 @@ const WrappedFormWIthSubmissionButton = Form.create()(FormWIthSubmissionButton);
 
 export default connect(state => ({
 	isLoggedIn: state.Auth.idToken !== null ? true : false,
-	registerdUser: state.User.userRegistered,
-}), {addUser})(WrappedFormWIthSubmissionButton, FormWIthSubmissionButton);
+	userRegistered: state.User.userRegistered,
+	userAvailable: state.User.userAvailable,
+	userEmailAvailable: state.User.userEmailAvailable
+}), {addUser, checkUserAvalability, checkUserEmailAvalability})(WrappedFormWIthSubmissionButton, FormWIthSubmissionButton);
 
 
 //addUser
@@ -274,5 +333,6 @@ const RegistrationForm = styled.div`
 	.btnsTop{
 		margin-bottom:15px;
 	}
+
 
 `;

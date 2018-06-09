@@ -9,6 +9,10 @@ appRouter.route('/').get(userController.getUsers);
 
 appRouter.route('/').post(userController.createUser);
 
+appRouter.route('/check_avalability/:username').get(userController.checkAvalability);
+
+appRouter.route('/check_email_avalability/:email').get(userController.checkEmailAvalability);
+
 appRouter.route('/sign_in').post(userController.signInUser);
 
 appRouter.route('/validate_token').get(jwt.validateToken, jwt.resolve);

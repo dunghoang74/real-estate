@@ -25,7 +25,7 @@ const UserSchema = new Schema({
     user_type: {
         type: String,
         enum: ['buyer', 'single_seller', 'real_state', 'constructor', 'runner'],
-        default: 'single_seller',
+        default: 'buyer',
     },
     email: {
         type: String,

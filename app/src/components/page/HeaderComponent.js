@@ -10,9 +10,14 @@ import styled from "styled-components";
 import RegistrationModal from '../modal/RegistrationModal';
 
 const {updateStatus} = modalActions;
-const {loggOutUser} = userActions;
+const {loggOutUser, checkLoginStatus} = userActions;
 
 class Header extends Component {
+
+    componentDidMount(){
+
+        this.props.checkLoginStatus();
+    }
 
     handleShowRegistration = () => {
         this.props.updateStatus(true)
@@ -26,6 +31,7 @@ class Header extends Component {
         return (
 
             <HeaderStyleWrapper className="container container-wrapper">
+            
                 <header className="header">
                     <div className="top-box">
                         <div className="container">
@@ -39,9 +45,7 @@ class Header extends Component {
                                     </div>
 
                                     <div className="pull-right pull-sm-up col-sm-6 col-xs-12 menuBtns">
-                                        
                                         <ButtonToolbar>
-                                            {console.log('useLoggedIn::: show stuffs::', this.props.userLoggedIn, )}
                                             {(!this.props.userLoggedIn) ? <Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.signInC" /></Button> :  <Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.addListing" /></Button>} 
 
 
@@ -101,8 +105,6 @@ class Header extends Component {
 
             </HeaderStyleWrapper>
 
-            
-            
         )
     }
 }
@@ -111,8 +113,8 @@ class Header extends Component {
 export default connect(state => ({
     isLoggedIn: state.Auth.idToken !== null ? true : false,
     show_section: state.App.section,
-    userLoggedIn : state.Auth.idToken !== null ? true : state.User.userLoggedIn,
-}),{updateStatus, loggOutUser})(Header);
+    userLoggedIn : (state.User.userLoggedIn && localStorage.getItem("id_token") !== null)? true : false,
+}),{updateStatus, loggOutUser, checkLoginStatus})(Header);
 
 
 const HeaderStyleWrapper = styled.div`

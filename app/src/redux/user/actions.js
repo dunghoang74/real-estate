@@ -2,13 +2,19 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import Notification from '../../components/notification';
 import config from '../../config';
+import authAction from "../../redux/auth/actions";
+import IntlMessages from '../../components/utility/intlMessages';
 
 const uri = config.end_point_uri;
+const { login } = authAction;
 
 const userActions = {
     REGISTER_USER: 'REGISTER_USER',
     LOGGED_IN_USER: 'LOGGED_IN_USER',
     LOGGED_OUT_USER: 'LOGGED_OUT_USER',
+    CHECK_LOGIN_STATUS: 'CHECK_LOGIN_STATUS',
+    CHECK_USER_AVALABITY: 'CHECK_USER_AVALABITY',
+    CHECK_USER_EMAIL_AVALABITY: 'CHECK_USER_EMAIL_AVALABITY',
 
     addUser: (user) => {
         const newUser = axios.post(`${uri}/api/user`, {
@@ -33,20 +39,13 @@ const userActions = {
                 // if is not empty then the user will be taken as isLoggenIn
                 if(data.token){
                     localStorage.setItem('id_token', data.token);
-                    
-                    // close the registration modal
-
-                    Notification(
-                        'success',
-                        'Welcome ' + data.user.username,
-                        //JSON.stringify(values)
-                    );
 
                     dispatch({
                         type: userActions.LOGGED_IN_USER,
                         loggedInUser: true,
                     });
 
+                    // it will trigger the welcome modal
                     dispatch({
                         type: userActions.REGISTER_USER,
                         userAdded: true,
@@ -70,15 +69,80 @@ const userActions = {
     loggOutUser: () =>{
         return (dispatch) => {
 
+            dispatch({
+                type: userActions.LOGGED_IN_USER,
+                loggedInUser: false,
+
+            });
+
             localStorage.removeItem('id_token');
             localStorage.removeItem('access_token');
             localStorage.removeItem('expires_at');
             sessionStorage.clear();
+            
+        };
+    },
+    checkLoginStatus: () =>{
+        let status = (localStorage.getItem('id_token') !== null) ? true : false;
+
+        return (dispatch) => {
 
             dispatch({
-                type: 'LOGGED_OUT_USER'
+                type: userActions.CHECK_LOGIN_STATUS,
+                loggedInUser: status,
             });
+            
         };
+    },
+    checkUserAvalability: (username) =>{
+        const User = axios.get(`${uri}/api/user/check_avalability/${username}`);
+        let userAvailable = true;
+
+        return (dispatch) => {
+            User
+                .then(({ data }) => {
+
+                    if (data !== null) {
+                        userAvailable = false;
+                    }
+
+                    dispatch({
+                        type: userActions.CHECK_USER_AVALABITY,
+                        userAvailable: userAvailable,
+                    });
+
+                })
+                .catch(err => {
+                    //dispatch({type: ERROR_GETTING_LEADS, payload: err});
+                });
+
+            
+         };
+    },
+    checkUserEmailAvalability: (email) =>{
+        const User = axios.get(`${uri}/api/user/check_email_avalability/${email}`);
+        let userEmailAvailable = true;
+
+        return (dispatch) => {
+            User
+                .then(({ data }) => {
+
+                    if (data !== null) {
+                        userEmailAvailable = false;
+                    }
+
+                    dispatch({
+                        type: userActions.CHECK_USER_EMAIL_AVALABITY,
+                        userEmailAvailable: userEmailAvailable,
+                    });
+
+                })
+                .catch(err => {
+                    //dispatch({type: ERROR_GETTING_LEADS, payload: err});
+                });
+
+            
+         };
     },
 
 };

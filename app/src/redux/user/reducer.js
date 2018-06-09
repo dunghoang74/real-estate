@@ -2,7 +2,8 @@ import actions from './actions';
 
 const initState = {
     userRegistered: false,
-    userLoggedIn: false,
+    userAvailable: true,
+    userEmailAvailable: true,
 };
 
 export default function userReducer(state = initState, action) {
@@ -22,6 +23,21 @@ export default function userReducer(state = initState, action) {
                 ...state,
                 userRegistered: false,
                 userLoggedIn : false,
+            };
+        case actions.CHECK_LOGIN_STATUS:
+            return {
+                ...state,
+                userLoggedIn : action.loggedInUser,
+            };
+        case actions.CHECK_USER_AVALABITY:
+            return {
+                ...state,
+                userAvailable : action.userAvailable,
+            };
+        case actions.CHECK_USER_EMAIL_AVALABITY:
+            return {
+                ...state,
+                userEmailAvailable : action.userEmailAvailable,
             };
         default:
             return state;

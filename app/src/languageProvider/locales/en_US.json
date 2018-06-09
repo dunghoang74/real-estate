@@ -641,5 +641,35 @@
   "header.searchProperty": "SEARCH YOUR PROPERTY",
 
   "form.wantToSearch": "I Want To Search",
-  "form.wantToPost": "I Want To Sell"
+  "form.wantToPost": "I Want To Sell",
+
+  "form.lable.username": "User Name",
+  "form.lable.email": "Email",
+  "form.lable.password": "Password",
+  "form.lable.phone": "Phone",
+  "form.lable.confirm_password": "Confirm Password",
+  "form.message.agreement": "I have read the",
+  "form.agreement": "agreement",
+  "form.drop.single_seller": "Single Seller",
+  "form.drop.real_state": "Real State",
+  "form.drop.constructor": "Constructor",
+  "form.drop.runner": "Runner",
+  "form.drop.select_a_user_type": "Select a user type",
+  "form.errormsg.please_select_option": "Please choose a user type!",
+  "form.errormsg.username": "Please insert username!",
+  "form.errormsg.email": "Please insert your email!",
+  "form.errormsg.phone": "Please insert phone!",
+  "form.errormsg.password": "Please insert password!",
+  "form.errormsg.confimr_password": "Please confirm password!",
+  "form.errormsg.terms": "Please confirm terms and conditions!",
+  "form.errormsg.username_greater": "Username must be greater than 4 characters!",
+  "form.errormsg.username_less": "Username must be less than 10 characters!",
+  "form.errormsg.username_taken": "The username is already taken!",
+  "form.errormsg.valid_email": "The input is not a valid email!",
+  "form.errormsg.email_suscribed": "This email is already suscribed!",
+  "form.errormsg.phone_only_numbers": "Please insert numbers only!",
+  "form.errormsg.match_password": "Two passwords that you enter is inconsistent!",
+  "form.close": "Close",
+  "form.welcome": "Welcome"
+
 }
