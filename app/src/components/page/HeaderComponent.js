@@ -46,7 +46,7 @@ class Header extends Component {
 
                                     <div className="pull-right pull-sm-up col-sm-6 col-xs-12 menuBtns">
                                         <ButtonToolbar>
-                                            {(!this.props.userLoggedIn) ? <Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.signInC" /></Button> :  <Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.addListing" /></Button>} 
+                                            {(!this.props.userLoggedIn) ? <Link to="/signin"><Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.signInC" /></Button></Link> :  <Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.addListing" /></Button>} 
 
 
                                              {(!this.props.userLoggedIn) ?  <Button bsStyle="success" onClick={() => { this.handleShowRegistration() }}> <IntlMessages id="header.registerC" /></Button> :  <Button bsStyle="success"> <IntlMessages id="header.searchProperty"/></Button>}     

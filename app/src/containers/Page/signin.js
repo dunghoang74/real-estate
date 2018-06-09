@@ -3,7 +3,8 @@ import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import Input from "../../components/uielements/input";
 import Checkbox from "../../components/uielements/checkbox";
-import Button from "../../components/uielements/button";
+// import Button from "../../components/uielements/button";
+import { Button } from 'react-bootstrap';
 import authAction from "../../redux/auth/actions";
 import appAction from "../../redux/app/actions";
 import Auth0 from "../../helpers/auth0";
@@ -11,6 +12,7 @@ import Firebase from "../../helpers/firebase";
 import FirebaseLogin from "../../components/firebase";
 import IntlMessages from "../../components/utility/intlMessages";
 import SignInStyleWrapper from "./signin.style";
+import styled from "styled-components";
 
 const { login } = authAction;
 const { clearMenu } = appAction;
@@ -41,70 +43,44 @@ class SignIn extends Component {
 			return <Redirect to={from} />;
 		}
 		return (
+			<SigInForm>
 			<SignInStyleWrapper className="isoSignInPage">
 				<div className="isoLoginContentWrapper">
 					<div className="isoLoginContent">
 						<div className="isoLogoWrapper">
-							<Link to="/dashboard">
-								<IntlMessages id="page.signInTitle" />
+							<Link to="/">
+								ZANZA.IO
 							</Link>
 						</div>
 
 						<div className="isoSignInForm">
 							<div className="isoInputWrapper">
-								<Input size="large" placeholder="Username" />
+								<Input size="large" className="inputSignin" placeholder="Nombre de Usuario" />
 							</div>
 
 							<div className="isoInputWrapper">
-								<Input size="large" type="password" placeholder="Password" />
+								<Input size="large" className="inputSignin" type="password" placeholder="Contraseña" />
 							</div>
 
 							<div className="isoInputWrapper isoLeftRightComponent">
-								<Checkbox>
-									<IntlMessages id="page.signInRememberMe" />
-								</Checkbox>
-								<Button type="primary" onClick={this.handleLogin}>
-									<IntlMessages id="page.signInButton" />
+								<Button bsStyle="primary" className="btnSignin" bsSize="large"  onClick={this.handleLogin}>
+									INGRESAR
 								</Button>
 							</div>
 
-							<p className="isoHelperText">
-								<IntlMessages id="page.signInPreview" />
-							</p>
-
-							<div className="isoInputWrapper isoOtherLogin">
-								<Button onClick={this.handleLogin} type="primary btnFacebook">
-									<IntlMessages id="page.signInFacebook" />
-								</Button>
-								<Button onClick={this.handleLogin} type="primary btnGooglePlus">
-									<IntlMessages id="page.signInGooglePlus" />
-								</Button>
-
-								{Auth0.isValid && (
-									<Button
-										onClick={() => {
-											Auth0.login(this.handleLogin);
-										}}
-										type="primary btnAuthZero"
-									>
-										<IntlMessages id="page.signInAuth0" />
-									</Button>
-								)}
-
-								{Firebase.isValid && <FirebaseLogin login={this.handleLogin} />}
-							</div>
 							<div className="isoCenterComponent isoHelperWrapper">
 								<Link to="/forgotpassword" className="isoForgotPass">
 									<IntlMessages id="page.signInForgotPass" />
 								</Link>
-								<Link to="/signup">
-									<IntlMessages id="page.signInCreateAccount" />
+								<Link to="/signup" className="createAccoutLink">
+									Crea una cuenta en ZANZA.IO
 								</Link>
 							</div>
 						</div>
 					</div>
 				</div>
 			</SignInStyleWrapper>
+			</SigInForm>
 		);
 	}
 }
@@ -115,3 +91,21 @@ export default connect(
 	}),
 	{ login, clearMenu }
 )(SignIn);
+
+
+const SigInForm = styled.div`
+	
+	.btnSignin{
+		width:100% !important;
+		font-size:1.5em !important;
+	}
+	.inputSignin{
+		font-size:1.3em;
+		height:52px !important;
+	}
+	.isoForgotPass, .createAccoutLink{
+		font-size:1.2em !important;
+	}
+
+
+`;

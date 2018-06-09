@@ -43,7 +43,7 @@ class FormWIthSubmissionButton extends Component {
 							"Bienvenido/a " + values.username ,
 						);		
 					}
-				}, 300);
+				}, 1500);
 
 				setTimeout(() => { 
 					if (localStorage.getItem('id_token') !== null){
