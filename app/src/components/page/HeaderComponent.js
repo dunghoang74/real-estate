@@ -8,6 +8,7 @@ import userActions from '../../redux/user/actions';
 import { Modal, Button, ButtonToolbar, DropdownButton, MenuItem } from 'react-bootstrap';
 import styled from "styled-components";
 import RegistrationModal from '../modal/RegistrationModal';
+import logo from '../../image/logo-min.png';
 
 const {updateStatus} = modalActions;
 const {loggOutUser, checkLoginStatus} = userActions;
@@ -39,8 +40,8 @@ class Header extends Component {
                                 <div className="container">
                                     <div className="logo pull-left pull-sm-up col-sm-6 col-xs-12  text-left">
                                         <Link to="/">
-                                            <img src="https://garrigusrealestate.net/wp-content/uploads/2017/01/Garrigus-Real-Estate-Logo-MAIN-FINISHED-NO-BACKGROUND-PNG-LOGO.png"  />
-                                            <img src="https://garrigusrealestate.net/wp-content/uploads/2017/01/Garrigus-Real-Estate-Logo-MAIN-FINISHED-NO-BACKGROUND-PNG-LOGO.png" width="100" className="mini-logo" />
+                                            <img src={logo}  />
+                                            <img src={logo} width="100" className="mini-logo" />
                                         </Link>
                                     </div>
 
