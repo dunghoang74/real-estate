@@ -4,23 +4,34 @@ import { connect } from "react-redux";
 import Input from "../../components/uielements/input";
 import Checkbox from "../../components/uielements/checkbox";
 // import Button from "../../components/uielements/button";
-import { Button } from 'react-bootstrap';
+// import { Button as ButtonB } from 'react-bootstrap';
+import { Button, Alert } from 'antd';
 import authAction from "../../redux/auth/actions";
 import appAction from "../../redux/app/actions";
 import Auth0 from "../../helpers/auth0";
-import Firebase from "../../helpers/firebase";
-import FirebaseLogin from "../../components/firebase";
 import IntlMessages from "../../components/utility/intlMessages";
 import SignInStyleWrapper from "./signin.style";
 import styled from "styled-components";
+import Notification from '../../components/notification';
 
-const { login } = authAction;
+const { login, setLoading } = authAction;
 const { clearMenu } = appAction;
 
 class SignIn extends Component {
 	state = {
-		redirectToReferrer: false
+		redirectToReferrer: false,
+		email: '',
+		password: '',
+		userData: null,
+		loginError: null,
 	};
+
+    updateField = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value
+        });
+	};
+
 	componentWillReceiveProps(nextProps) {
 		if (
 			this.props.isLoggedIn !== nextProps.isLoggedIn &&
@@ -29,11 +40,63 @@ class SignIn extends Component {
 			this.setState({ redirectToReferrer: true });
 		}
 	}
+	clearLocalAndSessionStorage(){
+		localStorage.removeItem('id_token');
+		localStorage.removeItem('access_token');
+		localStorage.removeItem('expires_at');
+		sessionStorage.clear();
+	}
 	handleLogin = () => {
-		const { login, clearMenu } = this.props;
-		login();
-		clearMenu();
-		this.props.history.push("/dashboard");
+		this.clearLocalAndSessionStorage();
+		const { login } = this.props;
+		const user = { email:this.state.email, password:this.state.password };
+		login(user);
+
+		setTimeout(() => {
+			if (localStorage.getItem('id_token') === null){
+				Notification(
+					'error',
+					"Error en su email o contraseña!",
+				);	
+				this.props.setLoading(false);
+			}
+		}, 500);
+	
+		setTimeout(() => { 
+			if (localStorage.getItem('id_token') !== null){
+
+				if(sessionStorage.getItem('usr') !== null){
+					let data = JSON.parse(sessionStorage.getItem('usr'));
+					Notification(
+						'success',
+						"Bienvenido/a " + data.username,
+					);	
+				}	
+			}
+		}, 500);
+
+		setTimeout(() => { 
+			if (localStorage.getItem('id_token') !== null){
+				Notification(
+					'success',
+					"Lo estamos redireccionando...",
+				);
+			}
+		}, 1000);
+
+		setTimeout(() => { 
+			if (localStorage.getItem('id_token') !== null){
+				if(sessionStorage.getItem('usr') !== null){
+					let data = JSON.parse(sessionStorage.getItem('usr'));
+					this.props.setLoading(false);
+					if(data.user_type == 'buyer'){
+						window.location = "/";
+					}else{
+						window.location = "/dashboard";
+					}
+				}
+			}
+		}, 1500);
 	};
 	render() {
 		const from = { pathname: "/dashboard" };
@@ -44,42 +107,42 @@ class SignIn extends Component {
 		}
 		return (
 			<SigInForm>
-			<SignInStyleWrapper className="isoSignInPage">
-				<div className="isoLoginContentWrapper">
-					<div className="isoLoginContent">
-						<div className="isoLogoWrapper">
-							<Link to="/">
-								ZANZA.IO
-							</Link>
-						</div>
-
-						<div className="isoSignInForm">
-							<div className="isoInputWrapper">
-								<Input size="large" className="inputSignin" placeholder="Nombre de Usuario" />
-							</div>
-
-							<div className="isoInputWrapper">
-								<Input size="large" className="inputSignin" type="password" placeholder="Contraseña" />
-							</div>
-
-							<div className="isoInputWrapper isoLeftRightComponent">
-								<Button bsStyle="primary" className="btnSignin" bsSize="large"  onClick={this.handleLogin}>
-									INGRESAR
-								</Button>
-							</div>
-
-							<div className="isoCenterComponent isoHelperWrapper">
-								<Link to="/forgotpassword" className="isoForgotPass">
-									<IntlMessages id="page.signInForgotPass" />
+				<SignInStyleWrapper className="isoSignInPage">
+					<div className="isoLoginContentWrapper">
+						<div className="isoLoginContent">
+							<div className="isoLogoWrapper">
+								<Link to="/">
+									RED-ECUAODR.IO
 								</Link>
-								<Link to="/signup" className="createAccoutLink">
-									Crea una cuenta en ZANZA.IO
-								</Link>
+							</div>
+
+							<div className="isoSignInForm">
+								<div className="isoInputWrapper">
+									<Input name="email" onChange={this.updateField} size="large" className="inputSignin" placeholder="Email" />
+								</div>
+
+								<div className="isoInputWrapper">
+									<Input name="password" onChange={this.updateField} size="large" className="inputSignin" type="password" placeholder="Contraseña" />
+								</div>
+
+								<div className="isoInputWrapper isoLeftRightComponent">
+									<Button type="primary" className="btnSignin" bssize="large" loading={this.props.loading}  onClick={this.handleLogin}>
+										INGRESAR
+									</Button>
+								</div>
+
+								<div className="isoCenterComponent isoHelperWrapper">
+									<Link to="/forgotpassword" className="isoForgotPass">
+										<IntlMessages id="page.signInForgotPass" />
+									</Link>
+									<Link to="/signup" className="createAccoutLink">
+										Crea una cuenta en RED-ECUADOR.IO
+									</Link>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</SignInStyleWrapper>
+				</SignInStyleWrapper>
 			</SigInForm>
 		);
 	}
@@ -87,9 +150,10 @@ class SignIn extends Component {
 
 export default connect(
 	state => ({
-		isLoggedIn: state.Auth.idToken !== null ? true : false
+		isLoggedIn: state.Auth.idToken !== null ? true : false,
+		loading: state.Auth.loading,
 	}),
-	{ login, clearMenu }
+	{ login, clearMenu, setLoading }
 )(SignIn);
 
 
@@ -98,6 +162,8 @@ const SigInForm = styled.div`
 	.btnSignin{
 		width:100% !important;
 		font-size:1.5em !important;
+		height:50px !important;
+		border-radius: 0px !important;
 	}
 	.inputSignin{
 		font-size:1.3em;

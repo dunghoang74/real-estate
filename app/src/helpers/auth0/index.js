@@ -36,7 +36,8 @@ class Auth0Helper {
     this.lock.show();
   }
   handleAuthentication(props) {
-    localStorage.setItem('id_token', 'secret token');
+    console.log('this is the HELPER AUTH')
+    localStorage.setItem('id_token', 'secret token auth HELPRES');
     history.replace('/dashboard');
   }
   setSession(authResult) {

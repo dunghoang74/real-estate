@@ -1,9 +1,6 @@
 import axios from 'axios';
-import { connect } from 'react-redux';
-import Notification from '../../components/notification';
 import config from '../../config';
 import authAction from "../../redux/auth/actions";
-import IntlMessages from '../../components/utility/intlMessages';
 
 const uri = config.end_point_uri;
 const { login } = authAction;
@@ -33,7 +30,7 @@ const userActions = {
                 // delete the hashed password from the api response
                 delete data.user.password;
                 // set the session storage with the user data sent by the API
-                sessionStorage.setItem('user_signed_up', JSON.stringify(data.user));
+                sessionStorage.setItem('usr', JSON.stringify(data.user));
 
                 // make sure the token was created from the api
                 // if is not empty then the user will be taken as isLoggenIn

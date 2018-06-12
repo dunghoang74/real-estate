@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Input, Select, Modal } from 'antd';
+import { Input, Select, Button } from 'antd';
+import { Button as ButtonB } from 'react-bootstrap';
 import Form from '../../components/uielements/form';
 import Checkbox from '../../components/uielements/checkbox';
 import Notification from '../../components/notification';
-import { Button, DropdownButton, ButtonToolbar, MenuItem } from 'react-bootstrap';
+import {  DropdownButton, ButtonToolbar, MenuItem } from 'react-bootstrap';
 import styled from "styled-components";
 import IntlMessages from '../../components/utility/intlMessages';
 import userActions from '../../redux/user/actions'
@@ -18,21 +19,26 @@ class FormWIthSubmissionButton extends Component {
 	state = {
 		confirmDirty: false,
 		formType: 'search',
+		loading:false,
+		userLable: "Usuario"
 	};
-
-	componentDidMount(){
-		console.log('the props::');
-	}
 
 	switchFormTo = (formToSwitch) =>{
 
 		this.setState({formType: formToSwitch});
+		if(formToSwitch === 'post'){
+			this.setState({userLable: 'Usuario/dominio'})
+		}else{
+			this.setState({userLable: 'Usuario'})
+		}
 	
 	}
 	handleSubmit = e => {
 		e.preventDefault();
 		this.props.form.validateFieldsAndScroll((err, values) => {
 			if (!err) {
+
+				this.setState({loading:true});
 				this.props.addUser(values);
 
 				setTimeout(() => { 
@@ -43,7 +49,7 @@ class FormWIthSubmissionButton extends Component {
 							"Bienvenido/a " + values.username ,
 						);		
 					}
-				}, 1500);
+				}, 500);
 
 				setTimeout(() => { 
 					if (localStorage.getItem('id_token') !== null){
@@ -52,15 +58,15 @@ class FormWIthSubmissionButton extends Component {
 							"Lo estamos redireccionando...",
 						);
 					}
-				}, 2000);
+				}, 1000);
 
 				setTimeout(() => { 
 					if (localStorage.getItem('id_token') !== null){
-
+						this.setState({loading:false});
 						window.location = "/dashboard";
 
 					}
-				}, 3500);
+				}, 1500);
 				
 			}
 			
@@ -125,6 +131,10 @@ class FormWIthSubmissionButton extends Component {
 		}
 
 	};
+	reCheckUsername = (e) => {
+		const form = this.props.form;
+		form.validateFields(['username'], { force: true });
+	}
 	checkUserEmail = (rule, value, callback) => {
 
 		const form = this.props.form;
@@ -141,6 +151,10 @@ class FormWIthSubmissionButton extends Component {
 
 		}, 800);
 
+	}
+	reCheckEmail = (e) => {
+		const form = this.props.form;
+		form.validateFields(['email'], { force: true });
 	}
 
 	render() {
@@ -172,13 +186,14 @@ class FormWIthSubmissionButton extends Component {
 			<RegistrationForm>
 				
 				<ButtonToolbar>
-					<Button bsStyle="primary" bsSize="large" className="btnsTop" onClick={() => {this.switchFormTo('search')}}>
+					<ButtonB bsStyle="primary" bsSize="large" className="btnsTop btnModal" onClick={() => {this.switchFormTo('search')}}>
 						<IntlMessages id="form.wantToSearch"/>
-					</Button>
-					<Button bsStyle="success" bsSize="large" className="btnPost btnsTop" onClick={() => {this.switchFormTo('post')}} >
+					</ButtonB>
+					<ButtonB bsStyle="success" bsSize="large" className="btnPost btnsTop btnModal" onClick={() => {this.switchFormTo('post')}} >
 						<IntlMessages id="form.wantToPost"/>
-					</Button>
+					</ButtonB>
 				</ButtonToolbar>
+
 				<Form onSubmit={this.handleSubmit}>
 
 					{(this.state.formType === 'post')
@@ -210,7 +225,7 @@ class FormWIthSubmissionButton extends Component {
 						: ''
 					}
 					
-					<FormItem {...formItemLayout} label={<IntlMessages id='form.lable.username' />} hasFeedback>
+					<FormItem {...formItemLayout} label={this.state.userLable} hasFeedback>
 						{getFieldDecorator('username', {
 							rules: [
 								{
@@ -231,7 +246,7 @@ class FormWIthSubmissionButton extends Component {
 								
 							],
 						})(
-						   <Input name="username" id="userName" />
+							<Input name="username" id="userName" onBlur={this.reCheckUsername} />
 						)}
 					</FormItem>
 
@@ -250,7 +265,7 @@ class FormWIthSubmissionButton extends Component {
 									message: <IntlMessages id='form.errormsg.email' />,
 								},
 							],
-						})(<Input name="email" id="email" />)}
+						})(<Input name="email" id="email" onBlur={this.reCheckEmail} />)}
 					</FormItem>
 
 					{(this.state.formType === 'post')
@@ -258,6 +273,14 @@ class FormWIthSubmissionButton extends Component {
 							<FormItem {...formItemLayout} label={<IntlMessages id='form.lable.phone' />} hasFeedback>
 								{getFieldDecorator('phone', {
 									rules: [
+										{
+											min:9,
+											message:"Ingrese minimo 9 números"
+										},
+										{
+											max:12,
+											message:"Ingrese maximo 12 números"
+										},
 										{
 											validator: this.checkPhone,
 										},
@@ -284,18 +307,18 @@ class FormWIthSubmissionButton extends Component {
 							],
 						})(<Input type="password" />)}
 					</FormItem>
-					<FormItem {...formItemLayout} label={<IntlMessages id='form.lable.confirm_password' />} hasFeedback>
+					<FormItem {...formItemLayout}  label="Repetir" hasFeedback>
 						{getFieldDecorator('confirm', {
 							rules: [
 								{
 									required: true,
-									message: <IntlMessages id='form.errormsg.confimr_password' />,
+									message: "Confirme su contraseña",
 								},
 								{
 									validator: this.checkPassword,
 								},
 							],
-						})(<Input type="password" onBlur={this.handleConfirmBlur} />)}
+						})(<Input type="password" onBlur={this.handleConfirmBlur} placeholder="Repetir contraseña" />)}
 					</FormItem>
 					<FormItem {...tailFormItemLayout} style={{ marginBottom: 8 }}>
 						{getFieldDecorator('agreement', {
@@ -314,9 +337,9 @@ class FormWIthSubmissionButton extends Component {
 						)}
 					</FormItem>
 					<FormItem {...tailFormItemLayout}>
-						<Button bsStyle="primary" type="submit">
+						<ButtonB className="btnModal btn_primary" bsStyle="primary" type="submit"  >
 							<IntlMessages id="header.registerC" />
-						</Button>
+						</ButtonB>
 					</FormItem>
 				</Form>
 			</RegistrationForm>
@@ -344,6 +367,16 @@ const RegistrationForm = styled.div`
 	}
 	.btnsTop{
 		margin-bottom:15px;
+	}
+	.btnModal{
+		font-size:1.5em !important;
+		height:50px !important;
+		border-radius: 0px !important;
+	}
+	.btn_primary{
+		color: #fff;
+		background-color: #337ab7;
+		border-color: #2e6da4;
 	}
 
 
