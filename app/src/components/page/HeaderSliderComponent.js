@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from "styled-components";
+import imageHome from '../../image/home01-min.jpeg';
 
 class HeaderSlider extends Component {
     render() {
@@ -12,7 +13,7 @@ class HeaderSlider extends Component {
                         <div className="carousel-inner" role="listbox">
                             
                             <div className="item active">
-                                <img src="http://www.cincyphotography.com/real-estate-cincinnati/real-estate-cincinnati.jpg" alt="Longtail boats at Phi Phi" />
+                                <img src={imageHome} alt="Inicio" />
                                 <div className="carousel-caption">
                                     <h3 className="carousel-caption-title"><span>Single Property real estate</span> <i className="line-bottom color-primary"></i></h3>
                                     <div className="s-description"><p>This is simply dummy text of the printing and the typesetting industry. That has been the industry standard dummy text ever since the 1500s ...</p></div>
