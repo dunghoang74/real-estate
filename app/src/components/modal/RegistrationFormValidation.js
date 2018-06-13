@@ -10,6 +10,7 @@ import styled from "styled-components";
 import IntlMessages from '../../components/utility/intlMessages';
 import userActions from '../../redux/user/actions'
 import { call } from 'redux-saga/effects';
+import { getUsernameFromUrl } from '../../../src/helpers/utility';
 
 const {addUser, checkUserAvalability, checkUserEmailAvalability} = userActions;
 
@@ -20,7 +21,8 @@ class FormWIthSubmissionButton extends Component {
 		confirmDirty: false,
 		formType: 'search',
 		loading:false,
-		userLable: "Usuario"
+		userLable: "Usuario",
+		usernameUri: getUsernameFromUrl()
 	};
 
 	switchFormTo = (formToSwitch) =>{
@@ -61,11 +63,18 @@ class FormWIthSubmissionButton extends Component {
 				}, 1000);
 
 				setTimeout(() => { 
-					if (localStorage.getItem('id_token') !== null){
-						this.setState({loading:false});
-						window.location = "/dashboard";
-
-					}
+						if (localStorage.getItem('id_token') !== null){
+							if(sessionStorage.getItem('usr') !== null){
+								let data = JSON.parse(sessionStorage.getItem('usr'));
+								if(data.user_type == 'buyer'){
+									// history.push(`/${data.username}`);
+									window.location = `/${data.username}`;
+								}else{
+									// history.push(`/${data.username}/dashboard`);
+									window.location = `/${data.username}/dashboard`;
+								}
+							}
+						}
 				}, 1500);
 				
 			}

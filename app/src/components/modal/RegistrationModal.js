@@ -52,7 +52,7 @@ class Header extends Component {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-        <Button bsStyle="danger" onClick={this.handleClose}><IntlMessages id="form.close" /></Button>
+                    <Button bsStyle="danger" onClick={this.handleClose}><IntlMessages id="form.close" /></Button>
                 </Modal.Footer>
             </Modal>
 

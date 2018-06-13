@@ -108,6 +108,7 @@ const PublicRoutes = ({ history, isLoggedIn }) => {
             Auth0.handleAuthentication(props);
           }}
         />
+		
         <RestrictedRoute
           path="/:username/dashboard"
           component={App}
