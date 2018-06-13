@@ -57,8 +57,6 @@ const logOut = (req, res, next) => {
 const signInUser = (req, res) => {
     const user = new UserModel(req.body);
 
-    console.log('req.body:::', req.body);
-
     UserModel.findOne({email: user.email})
         .then(usr => {
     
