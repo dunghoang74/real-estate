@@ -9,13 +9,19 @@ import { Modal, Button, ButtonToolbar, DropdownButton, MenuItem } from 'react-bo
 import styled from "styled-components";
 import RegistrationModal from '../modal/RegistrationModal';
 import logo from '../../image/logo-min.png';
+import { getUsernameFromUrl } from '../../../src/helpers/utility';
 
 const {updateStatus} = modalActions;
 const {loggOutUser, checkLoginStatus} = userActions;
 
 class Header extends Component {
 
+    state ={
+        usernameUri: getUsernameFromUrl(),
+    }
+
     componentDidMount(){
+
         this.props.checkLoginStatus();
     }
 
@@ -46,7 +52,8 @@ class Header extends Component {
 
                                     <div className="pull-right pull-sm-up col-sm-6 col-xs-12 menuBtns">
                                         <ButtonToolbar>
-                                            {(!this.props.userLoggedIn) ? <Link to="/signin"><Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.signInC" /></Button></Link> :  <Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.addListing" /></Button>} 
+                                            
+                                            {(!this.props.userLoggedIn) ? <Link to={`/${this.state.usernameUri}/signin`}><Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.signInC" /></Button></Link> :  <Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.addListing" /></Button>} 
 
 
                                              {(!this.props.userLoggedIn) ?  <Button bsStyle="success" onClick={() => { this.handleShowRegistration() }}> <IntlMessages id="header.registerC" /></Button> :  <Button bsStyle="success"> <IntlMessages id="header.searchProperty"/></Button>}     
@@ -154,3 +161,46 @@ const HeaderStyleWrapper = styled.div`
 
 `;
 
+
+
+
+// server {
+//         listen 80;
+
+//         server_name red-ecuador.com www.red-ecuador.com;
+
+//         root /var/www/html/build;
+//         index index.html;
+
+//         location ^~ /[a-z\-]+ {
+//                 try_files $uri $uri/ =404;
+//         }
+// }
+
+// server_name red-ecuador.com www.red-ecuador.com;
+
+// location /app {
+//         # try_files $uri $uri/ =404;
+//         # try_files $uri  /index.html =404;
+//         try_files $uri $uri/ /index.html$is_args$args;
+// }
+
+// location /index {
+//         try_files $uri $uri/ /index.html$is_args$args;
+// }
+
+// location ~ ^/[a-z\-]+ {
+//         try_files $uri $uri/ /index.html$is_args$args;
+// }
+
+// location /dashboard {
+//         try_files $uri $uri/ /index.html$is_args$args;
+// }
+
+// location /signin {
+//         try_files $uri $uri/ /index.html$is_args$args;
+// }
+
+// location /registration {
+//         try_files $uri $uri/ /index.html$is_args$args;
+// }

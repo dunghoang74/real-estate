@@ -13,6 +13,7 @@ import IntlMessages from "../../components/utility/intlMessages";
 import SignInStyleWrapper from "./signin.style";
 import styled from "styled-components";
 import Notification from '../../components/notification';
+import { getUsernameFromUrl } from '../../../src/helpers/utility';
 
 const { login, setLoading } = authAction;
 const { clearMenu } = appAction;
@@ -24,6 +25,7 @@ class SignIn extends Component {
 		password: '',
 		userData: null,
 		loginError: null,
+		usernameUri: getUsernameFromUrl()
 	};
 
     updateField = (e) => {
@@ -90,9 +92,9 @@ class SignIn extends Component {
 					let data = JSON.parse(sessionStorage.getItem('usr'));
 					this.props.setLoading(false);
 					if(data.user_type == 'buyer'){
-						window.location = "/";
+						this.props.history.push(`/${data.username}`);
 					}else{
-						window.location = "/dashboard";
+						this.props.history.push(`/${data.username}/dashboard`);
 					}
 				}
 			}
@@ -111,8 +113,8 @@ class SignIn extends Component {
 					<div className="isoLoginContentWrapper">
 						<div className="isoLoginContent">
 							<div className="isoLogoWrapper">
-								<Link to="/">
-									RED-ECUAODR.IO
+								<Link to={`/${this.state.usernameUri}`}>
+									RED-ECUADOR.COM
 								</Link>
 							</div>
 
@@ -136,7 +138,7 @@ class SignIn extends Component {
 										<IntlMessages id="page.signInForgotPass" />
 									</Link>
 									<Link to="/signup" className="createAccoutLink">
-										Crea una cuenta en RED-ECUADOR.IO
+										Crea una cuenta en RED-ECUADOR.COM
 									</Link>
 								</div>
 							</div>
