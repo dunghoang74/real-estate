@@ -4,6 +4,7 @@ const initState = {
     userRegistered: false,
     userAvailable: true,
     userEmailAvailable: true,
+    user_exist: false,
 };
 
 export default function userReducer(state = initState, action) {
@@ -38,6 +39,11 @@ export default function userReducer(state = initState, action) {
             return {
                 ...state,
                 userEmailAvailable : action.userEmailAvailable,
+            };
+        case actions.CHECK_USER_EXIST:
+            return {
+                ...state,
+                user_exist : action.user_exist,
             };
         default:
             return state;

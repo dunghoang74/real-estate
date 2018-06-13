@@ -66,3 +66,20 @@ class BodyIndex extends Component {
 }
 
 export default connect(state => ({}),{})(BodyIndex);
+
+
+
+
+// server {
+//        listen 80;
+
+//        server_name red-ecuador.com www.red-ecuador.com;
+
+//        root /var/www/html/users/germancin/build;
+//        index index.html;
+
+//        location /germancin {
+//                try_files $uri $uri/ =404;
+//        }
+// }
+

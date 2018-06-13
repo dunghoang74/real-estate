@@ -12,6 +12,7 @@ const userActions = {
     CHECK_LOGIN_STATUS: 'CHECK_LOGIN_STATUS',
     CHECK_USER_AVALABITY: 'CHECK_USER_AVALABITY',
     CHECK_USER_EMAIL_AVALABITY: 'CHECK_USER_EMAIL_AVALABITY',
+    CHECK_USER_EXIST : 'CHECK_USER_EXIST',
 
     addUser: (user) => {
         const newUser = axios.post(`${uri}/api/user`, {
@@ -40,12 +41,6 @@ const userActions = {
                     dispatch({
                         type: userActions.LOGGED_IN_USER,
                         loggedInUser: true,
-                    });
-
-                    // it will trigger the welcome modal
-                    dispatch({
-                        type: userActions.REGISTER_USER,
-                        userAdded: true,
                     });
 
                 }
@@ -90,6 +85,37 @@ const userActions = {
             });
             
         };
+    },
+    userExist:(username, history) => {
+        const User = axios.get(`${uri}/api/user/check_avalability/${username}`);
+        
+        
+        console.log('username and history::', username, history);
+
+        // return (dispatch) => {
+        //     User
+        //         .then(({ data }) => {
+        //             let user_exist = false;
+
+        //             if (data !== null) {
+        //                 user_exist = true;
+        //             }
+
+        //             dispatch({
+        //                 type: userActions.CHECK_USER_EXIST,
+        //                 user_exist: user_exist,
+        //             });
+
+        //         })
+        //         .catch(err => {
+        //             // dispatch({
+        //             //     type: userActions.CHECK_USER_EXIST,
+        //             //     user_exist: false,
+        //             // });
+        //         });
+            
+        //  };
+
     },
     checkUserAvalability: (username) =>{
         const User = axios.get(`${uri}/api/user/check_avalability/${username}`);
