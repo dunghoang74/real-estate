@@ -17,6 +17,7 @@ import YoutubeSearch from './youtubeSearch/reducers';
 import DevReducers from '../customApp/redux/reducers';
 import ModalStatus from './modal/reducer';
 import User from './user/reducer'
+import PageConfigReducer  from './pageConfig/reducer'
 
 export default {
   Auth,
@@ -37,5 +38,6 @@ export default {
   YoutubeSearch,
   ModalStatus,
   User,
+  PageConfigReducer,
   ...DevReducers
 };

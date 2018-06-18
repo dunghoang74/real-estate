@@ -20,14 +20,14 @@ const routes = [
     path: "calendar",
     component: asyncComponent(() => import("../Calendar/Calendar"))
   },
-  {
-    path: "googlemap",
-    component: asyncComponent(() => import("../Map/GoogleMap/googleMap"))
-  },
-  {
-    path: "leafletmap",
-    component: asyncComponent(() => import("../Map/Leaflet/leaflet"))
-  },
+  // {
+  //   path: "googlemap",
+  //   component: asyncComponent(() => import("../Map/GoogleMap/googleMap"))
+  // },
+  // {
+  //   path: "leafletmap",
+  //   component: asyncComponent(() => import("../Map/Leaflet/leaflet"))
+  // },
   {
     path: "table_ant",
     component: asyncComponent(() => import("../Tables/antTables"))

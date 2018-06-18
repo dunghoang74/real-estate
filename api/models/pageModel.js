@@ -3,6 +3,9 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const PageSchema = new Schema({
+    logo: {
+        type: String,
+    },
     color1: {
         type: String,
     },
@@ -10,9 +13,6 @@ const PageSchema = new Schema({
         type: String,
     },
     color3: {
-        type: String,
-    },
-    logo: {
         type: String,
     },
     header: {
@@ -23,12 +23,9 @@ const PageSchema = new Schema({
     },
     network_listing: {
         type: Boolean,
-        default: True,
+        default: true,
     },
     domain:{
-        type: String
-    },
-    subfolder:{
         type: String
     },
     facebook:{
@@ -40,9 +37,8 @@ const PageSchema = new Schema({
     linkedin:{
         type: String
     },
-    _properties : [{type:ObjectId, ref:'properties'}],
+    _user : {type:ObjectId, ref:'users'},
 
 });
-
 
 module.exports = mongoose.model('pages', PageSchema);

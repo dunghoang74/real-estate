@@ -53,6 +53,7 @@ const UserSchema = new Schema({
     _seen:[{ type:ObjectId, ref: 'properties' }],
     _zone : {type:ObjectId, ref: 'zones'},
     _properties: [{ type:ObjectId, ref: 'properties' }],
+    _page: [{ type:ObjectId, ref: 'pages' }],
 
 },{timestamps: true});
 

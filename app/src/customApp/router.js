@@ -6,8 +6,8 @@ const routes = [
     component: asyncComponent(() => import('./containers/GithubSearch'))
   },
   {
-    path: 'blank_page',
-    component: asyncComponent(() => import('./containers/blankPage'))
+    path: 'page-config',
+    component: asyncComponent(() => import('./containers/page-config'))
   }
 ];
 export default routes;

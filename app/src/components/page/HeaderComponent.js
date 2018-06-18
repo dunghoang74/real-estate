@@ -10,6 +10,7 @@ import styled from "styled-components";
 import RegistrationModal from '../modal/RegistrationModal';
 import logo from '../../image/logo-min.png';
 import { getUsernameFromUrl } from '../../../src/helpers/utility';
+import { Select } from 'antd';
 
 const {updateStatus} = modalActions;
 const {loggOutUser, checkLoginStatus} = userActions;
@@ -23,11 +24,17 @@ class Header extends Component {
     componentDidMount(){
 
         this.props.checkLoginStatus();
+
+        console.log('page_config:::', this.props.userPageConfig)
     }
 
     handleShowRegistration = () => {
         this.props.updateStatus(true)
     };
+
+    handleSelect = (event) => {
+        console.log(event.key)
+    }
 
     handleLoggOutUser = () => {
         this.props.loggOutUser();
@@ -59,15 +66,15 @@ class Header extends Component {
                                              {(!this.props.userLoggedIn) ?  <Button bsStyle="success" onClick={() => { this.handleShowRegistration() }}> <IntlMessages id="header.registerC" /></Button> :  <Button bsStyle="success"> <IntlMessages id="header.searchProperty"/></Button>}     
                                             {(this.props.userLoggedIn) 
                                                 ? 
-                                                    <DropdownButton bsStyle="primary" title="" id="top-menu" className="fixPrimary">
-                                                        <MenuItem eventKey="1">Action</MenuItem>
-                                                        <MenuItem eventKey="2">Another action</MenuItem>
-                                                        <MenuItem eventKey="3" >
-                                                            Active Item
-                                                        </MenuItem>
-                                                        <MenuItem divider />
-                                                        <MenuItem onClick={this.handleLoggOutUser}>Log Out</MenuItem>
-                                                    </DropdownButton>
+                                                <Select defaultValue="Menú Usuario">
+                                                    <Select.Option value="dashboard">
+                                                        <Link to={`/${this.state.usernameUri}/dashboard`}>Dashboard</Link>
+                                                    </Select.Option>
+                                                    <Select.Option value="page-config">
+                                                        <Link to={`/${this.state.usernameUri}/dashboard/page-config`}>Página</Link>
+                                                    </Select.Option>
+                                                    <Select.Option value="logout" onClick={this.handleLoggOutUser} >Salir</Select.Option>
+                                                </Select>
                                                 : ''
                                             }
                                             
@@ -121,6 +128,7 @@ export default connect(state => ({
     isLoggedIn: state.Auth.idToken !== null ? true : false,
     show_section: state.App.section,
     userLoggedIn : (state.User.userLoggedIn && localStorage.getItem("id_token") !== null)? true : false,
+    userPageConfig: state.PageConfigReducer,
 }),{updateStatus, loggOutUser, checkLoginStatus})(Header);
 
 
@@ -158,6 +166,17 @@ const HeaderStyleWrapper = styled.div`
     .header{
         text-transform: capitalize !important;
     }
+
+    .selectItem {
+        color:black
+    }
+
+    .selectItem:hover {
+        border:2px solid black;
+        color:black !important;
+    }
+
+    .selectItem {}
 
 `;
 

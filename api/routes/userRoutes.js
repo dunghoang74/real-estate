@@ -15,7 +15,7 @@ appRouter.route('/check_email_avalability/:email').get(userController.checkEmail
 
 appRouter.route('/sign_in').post(userController.signInUser);
 
-appRouter.route('/validate_token').get(jwt.validateToken, jwt.resolve);
+appRouter.route('/validate_token').post(jwt.validateToken, jwt.resolve);
 
 appRouter.route('/extend_token_life').get(jwt.extendTokenLife);
 

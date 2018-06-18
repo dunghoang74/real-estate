@@ -2,7 +2,7 @@ export default {
   apiUrl: 'http://yoursite.com/api/'
 };
 const siteConfig = {
-  siteName: 'REAL ESTATE',
+  siteName: 'KAZAMAP',
   siteIcon: 'ion-flash',
   footerText: 'Red-Ecuador ©2018 Created by GcomLnk, LLC'
 };

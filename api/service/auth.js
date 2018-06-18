@@ -8,11 +8,12 @@ const getTokenForUser = (userObject, time) => {
 };
 
 const validateToken =  (req, res, next) => {
-    const token = req.cookies.access_token;
+    // const token = req.cookies.access_token;
+    const token = req.headers.authorization;
 
     if (!token) {
         res.status(499);
-        res.json({message: 'Required Token.'});
+        res.json({message: 'Required Token.' + token});
         return;
     }
 
@@ -23,7 +24,6 @@ const validateToken =  (req, res, next) => {
             return;
         }
 
-        console.log('decoded token', decoded);
         // sets the decoded JWT/user object on the request object for use in next middleware.
         req.decoded = decoded;
         next();
@@ -70,3 +70,9 @@ module.exports = {
     resolve,
     extendTokenLife
 };
+
+
+
+
+
+

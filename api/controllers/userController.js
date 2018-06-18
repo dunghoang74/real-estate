@@ -4,15 +4,12 @@ const { requireAuth, getTokenForUser } = require('../service/auth');
 const createUser = (req, res, next) => {
     const user = new UserModel(req.body);
 
-    console.log('the user info to save:::', user);
-
     user.save()
         .then(user => {
             // send the JWT for quick auto sign_in
             const token = getTokenForUser({ user: user,
-                                            access: true }, '1h');
+                                            access: true }, '1m');
             
-                                            
             //res.cookie('access_token', token, { maxAge: 604800, httpOnly: true });
             res.send({"user":user, "token":token});
             return next();
@@ -25,7 +22,8 @@ const createUser = (req, res, next) => {
 const getUsers = (req, res) => {
 
     UserModel.find({})
-        .populate('_properties')
+        .populate('_properties,')
+        .populate('_page')
         .then(resp => res.json(resp));
 
 };
@@ -68,7 +66,7 @@ const signInUser = (req, res) => {
     
                         if (isValid) {
                             const token = getTokenForUser({ user: usr,
-                                                            access: true }, '1h');
+                                                            access: true }, '1m');
                             
                             // This is a very secure way of sending the token 
                             // check more documentation about it and re-write this part

@@ -5,8 +5,8 @@ const options = [
     leftIcon: 'ion-social-github'
   },
   {
-    key: 'blank_page',
-    label: 'sidebar.blankPage',
+    key: 'page-config',
+    label: "Mi Página",
     leftIcon: 'ion-document'
   }
 ];

@@ -1,9 +1,10 @@
 import axios from 'axios';
 import config from '../../config';
 import authAction from "../../redux/auth/actions";
+import {getUsernameFromUrl} from "../../helpers/utility";
+import Notification from '../../components/notification';
 
 const uri = config.end_point_uri;
-const { login } = authAction;
 
 const userActions = {
     REGISTER_USER: 'REGISTER_USER',
@@ -74,49 +75,62 @@ const userActions = {
             
         };
     },
-    checkLoginStatus: () =>{
-        let status = (localStorage.getItem('id_token') !== null) ? true : false;
+    checkLoginStatus: () => {
 
         return (dispatch) => {
 
-            dispatch({
-                type: userActions.CHECK_LOGIN_STATUS,
-                loggedInUser: status,
-            });
-            
+            if(localStorage.getItem('id_token') !== null){
+
+                let config = {
+                        headers: { 
+                            'Authorization': localStorage.getItem('id_token')
+                        },withCredentials: true
+                    };
+                
+                axios.post(`${uri}/api/user/validate_token`, null, config)
+                    .then((resp) => {
+
+                        console.log("---VALID token---", resp);
+                        dispatch({
+                            type: userActions.CHECK_LOGIN_STATUS,
+                            loggedInUser: true,
+                        });
+                        
+                    })
+                    .catch((err) => {
+                        
+                        console.log("----INVALID TOKEN---", err.response, err.response.status);
+
+                        if(err.response.status === 499 || err.response.status === 403){
+                            // redirect to signin page
+                            localStorage.removeItem('id_token');
+                            localStorage.removeItem('access_token');
+                            localStorage.removeItem('expires_at');
+                            // sessionStorage.clear();
+
+                            Notification(
+                                'error',
+                                "Su session ha terminado. Porfavor Ingrese nuevamente.",
+                            );
+
+                            setTimeout(() =>{
+                                window.location =  "/" + getUsernameFromUrl();
+                            },500)
+                            
+                            dispatch({
+                                type: userActions.CHECK_LOGIN_STATUS,
+                                loggedInUser: false,
+                            });
+                        }
+                    }
+                );
+
+            }
         };
-    },
-    userExist:(username, history) => {
-        const User = axios.get(`${uri}/api/user/check_avalability/${username}`);
+
         
-        
-        console.log('username and history::', username, history);
-
-        // return (dispatch) => {
-        //     User
-        //         .then(({ data }) => {
-        //             let user_exist = false;
-
-        //             if (data !== null) {
-        //                 user_exist = true;
-        //             }
-
-        //             dispatch({
-        //                 type: userActions.CHECK_USER_EXIST,
-        //                 user_exist: user_exist,
-        //             });
-
-        //         })
-        //         .catch(err => {
-        //             // dispatch({
-        //             //     type: userActions.CHECK_USER_EXIST,
-        //             //     user_exist: false,
-        //             // });
-        //         });
-            
-        //  };
-
     },
+    
     checkUserAvalability: (username) =>{
         const User = axios.get(`${uri}/api/user/check_avalability/${username}`);
         let userAvailable = true;

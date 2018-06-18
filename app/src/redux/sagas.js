@@ -11,7 +11,8 @@ import chatSagas from './chat/sagas';
 import youtubeSearchSagas from './youtubeSearch/sagas';
 import devSagas from '../customApp/redux/sagas';
 import modalSagas from './modal/saga';
-import updateLoggedInSections from './user/saga'
+import updateLoggedInSections from './user/saga';
+import userPageConfiguration from './pageConfig/saga';
 
 export default function* rootSaga(getState) {
   yield all([
@@ -27,6 +28,7 @@ export default function* rootSaga(getState) {
     youtubeSearchSagas(),
     modalSagas(),
     updateLoggedInSections(),
-    devSagas()
+    devSagas(),
+    userPageConfiguration()
   ]);
 }

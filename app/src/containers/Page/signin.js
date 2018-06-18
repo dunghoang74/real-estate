@@ -113,9 +113,13 @@ class SignIn extends Component {
 					<div className="isoLoginContentWrapper">
 						<div className="isoLoginContent">
 							<div className="isoLogoWrapper">
-								<Link to={`/${this.state.usernameUri}`}>
-									RED-ECUADOR.COM
-								</Link>
+								{/* <Link to={`/${this.state.usernameUri}`}>
+									KAZAMAP.COM
+								</Link> */}
+								
+								<a href={`/${this.state.usernameUri}`}> 
+									KAZAMAP.COM
+								</a>
 							</div>
 
 							<div className="isoSignInForm">

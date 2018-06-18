@@ -8,6 +8,7 @@ const propertyRoutes = require('./api/routes/propertyRoutes');
 const propertyUnitRoutes = require('./api/routes/propertyUnitRoutes');
 const categoryRoutes = require('./api/routes/categoryRoutes');
 const notificationRoutes = require('./api/routes/notificationRoutes');
+const pageRoutes = require('./api/routes/pageRoutes');
 const config = require('./config');
 
 const port = process.env.PORT || config.port_to_listen;
@@ -56,10 +57,11 @@ server.use(express.json());
 // Adding Headers for requests.
 server.use(function (req, res, next) {
     // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Origin', 'http://red-ecuador.com');
+    res.setHeader('Access-Control-Allow-Origin', 'http://kazamap.com');
+    res.setHeader('Access-Control-Allow-Headers', "Authorization, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+    res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
     res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+
     next();
 });
 
@@ -69,6 +71,7 @@ server.use('/api/property', propertyRoutes);
 server.use('/api/property_unit', propertyUnitRoutes);
 server.use('/api/category', categoryRoutes);
 server.use('/api/notification', notificationRoutes);
+server.use('/api/page', pageRoutes);
 
 db.connectTo();
 
