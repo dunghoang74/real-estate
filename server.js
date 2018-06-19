@@ -52,7 +52,7 @@ const faker = require('faker');
 // }
 
 server.use(helmet());
-server.use('/uploads', express.static('uploads'));
+// server.use('/uploads', express.static('uploads'));
 server.use(express.json());
 
 // Adding Headers for requests.

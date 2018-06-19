@@ -110,3 +110,7 @@ export function uploadLogo(file) {
 export function getUsernameFromUrl() {
 	return window.location.pathname.replace(/^\/([^\/]*).*$/, '$1');
 }
+
+export function getPageByUserId(userId){
+	return axios.get(`${uri}/api/page/${userId}`);
+}

@@ -18,9 +18,14 @@ const createPage = (req, res, next) => {
 };
 
 const getPage = (req, res) => {
-    PageModel.find({ /*_user: '5b25c20606e509b5af9b5373'*/})
+    const userId = req.params.userId;
+
+    PageModel.find({ _user: userId})
         .populate('_user')
-        .exec((err, resp) => res.status(200).send(resp));
+        .exec((err, resp) => {
+            if (err) return  res.status(500).send(err);
+            res.status(200).send(resp)
+        });
 };
 
 const updatePage = (req, res) => {
@@ -29,20 +34,37 @@ const updatePage = (req, res) => {
     //     .exec((err, resp) => res.status(200).send(resp));
 }; 
 
-const updateLogo = (req, res, next) => {
-    const imageLogo = new PageModel();
-    
-    imageLogo.logo = req.file.filename;
-    imageLogo._user = req.decoded.user._id;
+const uploadLogo = (req, res, next) => {
+    PageModel._user = req.decoded.user._id;
 
-    imageLogo.save()
-        .then(newImg => {
-            res.status(200).send(newImg)
-        })
-        .catch(err => {
-            res.status(500).send({error: "Something went wrong saving your logo", info: err});
+    PageModel.find({ _user: PageModel._user })
+        .populate()
+        .exec((err, resp) => {
+            const NewPagModel = new PageModel();
+            NewPagModel._user = req.decoded.user._id;
+            NewPagModel.logo = req.file.filename;
+
+            if(resp.length > 0 && err === null){
+                
+                PageModel.findOneAndUpdate({ _user: PageModel._user}, {logo:NewPagModel.logo}, {new: true})
+                    .populate()
+                    .exec((err, response) => {
+                        if (err) return  res.status(500).send(err);
+                        res.status(200).send(response);
+                });
+
+            }else{
+                NewPagModel.save()
+                    .then(newImg => {
+                        res.status(200).send(newImg)
+                    })
+                    .catch(err => {
+                        res.status(500).send({error: "Something went wrong saving your logo", info: err});
+                    });
+            }
         });
 }
+
 
 const deletePage = (req, res) => {
     // PageModel.find({})
@@ -50,6 +72,6 @@ const deletePage = (req, res) => {
     //     .exec((err, resp) => res.status(200).send(resp));
 };
 
-module.exports = {createPage, getPage, updatePage, deletePage, updateLogo};
+module.exports = {createPage, getPage, updatePage, deletePage, uploadLogo};
 
 

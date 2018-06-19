@@ -99,9 +99,9 @@ const userActions = {
                     })
                     .catch((err) => {
                         
-                        console.log("----INVALID TOKEN---", err.response, err.response.status);
+                        console.log("----INVALID TOKEN---", err.response);
 
-                        if(err.response.status === 499 || err.response.status === 403){
+                        if(err.response !== undefined && (err.response.status === 499 || err.response.status === 403)){
                             // redirect to signin page
                             localStorage.removeItem('id_token');
                             localStorage.removeItem('access_token');

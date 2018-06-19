@@ -65,7 +65,7 @@ class FormWIthSubmissionButton extends Component {
 				setTimeout(() => { 
 						if (localStorage.getItem('id_token') !== null){
 							if(sessionStorage.getItem('usr') !== null){
-								let data = JSON.parse(sessionStorage.getItem('usr'));
+								let data = sessionStorage.getItem('usr');
 								if(data.user_type == 'buyer'){
 									// history.push(`/${data.username}`);
 									window.location = `/${data.username}`;

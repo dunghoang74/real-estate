@@ -13,7 +13,7 @@ import Card from '../../containers/Uielements/Card/card.style';
 import styled from "styled-components";
 import {uploadLogo} from '../../helpers/utility';
 import pageConfig from '../../redux/pageConfig/actions';
-import { getUsernameFromUrl } from '../../../src/helpers/utility';
+import { getUsernameFromUrl, getPageByUserId } from '../../../src/helpers/utility';
 
 const {setupPage} = pageConfig;
 
@@ -22,7 +22,32 @@ class PageConfig extends Component {
 		value: 'mysite',
 		copied: false,
 		loading: false,
+		page:null,
+		images:null
 	};
+
+	componentDidMount(){
+		let data = JSON.parse(sessionStorage.getItem('usr'));
+
+		getPageByUserId(data._id)
+			.then((resp) => {
+				if(resp.data.length > 0){
+					this.setState({page: resp.data[0]});
+				}
+			})
+			.catch((err)=>{
+				console.log(err.response)
+			})
+
+		const images = this.importAll(require.context('../../image/logos/', false, /\.(png|jpe?g)$/));
+		this.setState({ images: images });
+	}
+
+	importAll = (r) => {
+		let images = {};
+		r.keys().map((item) => { images[item.replace('./', '')] = r(item); });
+		return images;
+	}
 
 	onClose = function (e) {
 		const btn = document.getElementById("btnLearn");
@@ -69,8 +94,7 @@ class PageConfig extends Component {
 					loading: false,
 				})
 
-				console.log('error from page-cofig:::', err.response.status)
-				if(err.response.status === 403 || err.response.status === 499){
+				if(err.response !== undefined && (err.response.status === 403 || err.response.status === 499)){
 
 					window.location = '/' + getUsernameFromUrl() + '/signin';
 
@@ -114,8 +138,8 @@ class PageConfig extends Component {
 	}
 
 	render() {
-		const { colStyle, gutter, pageTitle } = basicStyle;
 
+		const { colStyle, gutter, pageTitle } = basicStyle;
 		const uploadButton = (
 			<div>
 				<Icon type={this.state.loading ? 'loading' : 'plus'} />
@@ -181,20 +205,35 @@ class PageConfig extends Component {
 						</Col>
 						<Col md={12} sm={12} xs={24} style={colStyle}>
 							<Box title="Añade tu Logo:" subtitle="En esta sección puedes añadir el logo de tu compañia, caso contrario saldrá el logo de Kazamap.com. Te recomendamos añadir el tuyo propio para darle identidad a tu página.">
-
-								<Upload
-									name="avatar"
-									listType="picture-card"
-									className="avatar-uploader"
-									showUploadList={false}
-									// action="http://localhost:3020/api/page/update-logo"
-									action="memory"
-									beforeUpload={this.beforeUpload}
-									onChange={this.handleChange}
-									customRequest={this.onUpload}
-								>
-									{imageUrl ? <img src={imageUrl} alt="avatar" width="100px" /> : uploadButton}
-								</Upload>
+								
+								<table>
+									<tbody>
+										<tr>
+											<td>
+												{
+													(this.state.page !== null) 
+													?   
+														<img src={this.state.images[this.state.page.logo]} width="102px"/>
+													:   ''
+												}
+											</td>
+											<td>
+												<Upload
+													name="avatar"
+													listType="picture-card"
+													className="avatar-uploader"
+													showUploadList={false}
+													action="memory"
+													beforeUpload={this.beforeUpload}
+													onChange={this.handleChange}
+													customRequest={this.onUpload}
+												>
+													{imageUrl ? <img src={imageUrl} alt="avatar" width="100px" /> : uploadButton}
+												</Upload>
+											</td>		
+										</tr>	
+									</tbody>
+								</table>	
 
 							</Box>
 						</Col>

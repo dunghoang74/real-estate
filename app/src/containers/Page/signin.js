@@ -2,13 +2,9 @@ import React, { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import Input from "../../components/uielements/input";
-import Checkbox from "../../components/uielements/checkbox";
-// import Button from "../../components/uielements/button";
-// import { Button as ButtonB } from 'react-bootstrap';
 import { Button, Alert } from 'antd';
 import authAction from "../../redux/auth/actions";
 import appAction from "../../redux/app/actions";
-import Auth0 from "../../helpers/auth0";
 import IntlMessages from "../../components/utility/intlMessages";
 import SignInStyleWrapper from "./signin.style";
 import styled from "styled-components";
@@ -142,7 +138,7 @@ class SignIn extends Component {
 										<IntlMessages id="page.signInForgotPass" />
 									</Link>
 									<Link to="/signup" className="createAccoutLink">
-										Crea una cuenta en RED-ECUADOR.COM
+										Crea una cuenta en KAZAMAP.COM
 									</Link>
 								</div>
 							</div>
