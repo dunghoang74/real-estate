@@ -8,7 +8,7 @@ const createUser = (req, res, next) => {
         .then(user => {
             // send the JWT for quick auto sign_in
             const token = getTokenForUser({ user: user,
-                                            access: true }, '1m');
+                                            access: true }, '1h');
             
             //res.cookie('access_token', token, { maxAge: 604800, httpOnly: true });
             res.send({"user":user, "token":token});
@@ -66,7 +66,7 @@ const signInUser = (req, res) => {
     
                         if (isValid) {
                             const token = getTokenForUser({ user: usr,
-                                                            access: true }, '1m');
+                                                            access: true }, '1h');
                             
                             // This is a very secure way of sending the token 
                             // check more documentation about it and re-write this part
