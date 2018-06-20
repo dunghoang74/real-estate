@@ -11,11 +11,10 @@ import basicStyle from '../../settings/basicStyle';
 import IntlMessages from '../../components/utility/intlMessages';
 import Card from '../../containers/Uielements/Card/card.style';
 import styled from "styled-components";
-import {uploadLogo} from '../../helpers/utility';
 import pageConfig from '../../redux/pageConfig/actions';
 import { getUsernameFromUrl, getPageByUserId } from '../../../src/helpers/utility';
 
-const {setupPage, getPageInfo, getImages} = pageConfig;
+const {setupPage, getPageInfo, getImages, uploadLogo, loading} = pageConfig;
 
 class PageConfig extends Component {
 	state = {
@@ -23,6 +22,7 @@ class PageConfig extends Component {
 		copied: false,
 		loading: false,
 		page:null,
+		file:null,
 	};
 
 	componentDidMount(){
@@ -30,7 +30,7 @@ class PageConfig extends Component {
 		this.props.getImages();
 		let data = JSON.parse(sessionStorage.getItem('usr'));
 		this.props.getPageInfo(data._id);
-		
+		this.props.loading('plus');
 
 	}
 
@@ -68,27 +68,31 @@ class PageConfig extends Component {
 
 	onUpload = ({ file, onSuccess }) => {
 		
-		uploadLogo(file)
-			.then((resp) => {
-				onSuccess('done', file);
-				//setup page configuration
-				console.log('upload response:::', resp.data)
-				this.props.setupPage(resp.data);
-			})
-			.catch((err) => {
-				this.setState({
-					loading: false,
-				})
+		this.props.uploadLogo(file);
 
-				if(err.response !== undefined && (err.response.status === 403 || err.response.status === 499)){
+		this.setState({file:file});
 
-					window.location = '/' + getUsernameFromUrl() + '/signin';
+		// uploadLogo(file)
+		// 	.then((resp) => {
+		// 		onSuccess('done', file);
+		// 		//setup page configuration
+		// 		console.log('upload response:::', resp.data)
+		// 		this.props.setupPage(resp.data);
+		// 	})
+		// 	.catch((err) => {
+		// 		this.setState({
+		// 			loading: false,
+		// 		})
 
-				}else{
-					message.error('Hubo un error al subir el logo. Refresque la página e intente denuevo.');
-				}
+		// 		if(err.response !== undefined && (err.response.status === 403 || err.response.status === 499)){
 
-			});
+		// 			window.location = '/' + getUsernameFromUrl() + '/signin';
+
+		// 		}else{
+		// 			message.error('Hubo un error al subir el logo. Refresque la página e intente denuevo.');
+		// 		}
+
+		// 	});
 
 	}
 
@@ -124,15 +128,20 @@ class PageConfig extends Component {
 	}
 
 	render() {
+		if(this.state.file !== null){
+			console.log('now is plus bcause is uploades');
+			this.onSuccess('done', this.state.file);
+		}
 		if(this.props.pageUserInfo !== null){
 			console.log('pageUserinfo:::', this.props.pageUserInfo.logo);
 		}
 		console.log('al images:::', this.props.images)
+		console.log('loading:::', this.props.loading_status)
 
 		const { colStyle, gutter, pageTitle } = basicStyle;
 		const uploadButton = (
 			<div>
-				<Icon type={this.state.loading ? 'loading' : 'plus'} />
+				<Icon type={this.props.loading_status} />
 				<div className="ant-upload-text">Subir Logo</div>
 			</div>
 		);
@@ -200,7 +209,6 @@ class PageConfig extends Component {
 									<tbody>
 										<tr>
 											<td>
-												{/* {(this.state.page !== null) ? this.state.images[this.state.page.logo] : '' } */}
 												{	
 													(this.props.pageUserInfo !== null) 
 													?
@@ -241,7 +249,15 @@ export default connect(
 		isLoggedIn: state.Auth.idToken !== null ? true : false,
 		pageUserInfo: state.PageConfigReducer.user_page,
 		images: state.PageConfigReducer.images,
-	}),{setupPage, getPageInfo, getImages})(PageConfig);
+		loading_status: state.PageConfigReducer.loading,
+
+	}),
+	{setupPage, 
+	getPageInfo, 
+	getImages, 
+	uploadLogo,
+	loading,
+	})(PageConfig);
 
 
 const PageConfigWrapper = styled.div`

@@ -3,6 +3,7 @@ import actions from './actions';
 const initState = {
     user_page: null,
     images:null,
+    loading:'plus',
 };
 
 export default function PageConfigReducer(state = initState, action) {
@@ -16,6 +17,11 @@ export default function PageConfigReducer(state = initState, action) {
             return {
                 ...state,
                 images: action.images,
+            };
+        case actions.LOADING:
+            return {
+                ...state,
+                loading: action.loading,
             };
         default:
             return state;

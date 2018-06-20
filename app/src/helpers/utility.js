@@ -91,22 +91,6 @@ export function checkUsernameFromUrl() {
 	return  axios.get(`${uri}/api/user/check_avalability/${username}`);
 }
 
-export function uploadLogo(file) {
-	let data = new FormData();
-	
-	data.append('logoPage', file); //logoPage is configured at the router
-
-	let config = {
-			headers: { 
-						'Content-Type': 'multipart/form-data',
-						'Authorization': localStorage.getItem('id_token')
-					},
-			withCredentials: true
-	};
-
-	return  axios.post(`${uri}/api/page/upload-logo`, data, config)
-}
-
 export function getUsernameFromUrl() {
 	return window.location.pathname.replace(/^\/([^\/]*).*$/, '$1');
 }
