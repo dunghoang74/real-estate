@@ -219,9 +219,10 @@ class PageConfig extends Component {
 									<tbody>
 										<tr>
 											<td>
-												{
+												{(this.state.page !== null) ? this.state.images[this.state.page.logo] : '' }
+												{	
 													(this.state.page !== null) 
-													?   
+													?
 														<img src={this.state.images[this.state.page.logo]} width="102px"/>
 													:   ''
 												}
