@@ -15,7 +15,7 @@ import {uploadLogo} from '../../helpers/utility';
 import pageConfig from '../../redux/pageConfig/actions';
 import { getUsernameFromUrl, getPageByUserId } from '../../../src/helpers/utility';
 
-const {setupPage} = pageConfig;
+const {setupPage, getPageInfo, getImages} = pageConfig;
 
 class PageConfig extends Component {
 	state = {
@@ -23,37 +23,15 @@ class PageConfig extends Component {
 		copied: false,
 		loading: false,
 		page:null,
-		images:null
 	};
 
 	componentDidMount(){
+
+		this.props.getImages();
 		let data = JSON.parse(sessionStorage.getItem('usr'));
+		this.props.getPageInfo(data._id);
+		
 
-		getPageByUserId(data._id)
-			.then((resp) => {
-				if(resp.data.length > 0){
-
-					setTimeout(()=>{
-						this.setState({page: resp.data[0]});
-					},500)
-
-				}
-			})
-			.catch((err)=>{
-				console.log(err.response)
-			})
-			const images = this.importAll(require.context('../../image/logos/', false, /\.(png|jpe?g)$/));
-			
-			setTimeout(()=>{
-				this.setState({ images: images });
-			},500)
-			
-	}
-
-	importAll = (r) => {
-		let images = {};
-		r.keys().map((item) => { images[item.replace('./', '')] = r(item); });
-		return images;
 	}
 
 	onClose = function (e) {
@@ -94,7 +72,8 @@ class PageConfig extends Component {
 			.then((resp) => {
 				onSuccess('done', file);
 				//setup page configuration
-				this.props.setupPage(resp);
+				console.log('upload response:::', resp.data)
+				this.props.setupPage(resp.data);
 			})
 			.catch((err) => {
 				this.setState({
@@ -145,6 +124,10 @@ class PageConfig extends Component {
 	}
 
 	render() {
+		if(this.props.pageUserInfo !== null){
+			console.log('pageUserinfo:::', this.props.pageUserInfo.logo);
+		}
+		console.log('al images:::', this.props.images)
 
 		const { colStyle, gutter, pageTitle } = basicStyle;
 		const uploadButton = (
@@ -212,18 +195,16 @@ class PageConfig extends Component {
 						</Col>
 						<Col md={12} sm={12} xs={24} style={colStyle}>
 							<Box title="Añade tu Logo:" subtitle="En esta sección puedes añadir el logo de tu compañia, caso contrario saldrá el logo de Kazamap.com. Te recomendamos añadir el tuyo propio para darle identidad a tu página.">
-								
-								{console.log('page imaages:::',this.state.page,  this.state.images )}
 
 								<table>
 									<tbody>
 										<tr>
 											<td>
-												{(this.state.page !== null) ? this.state.images[this.state.page.logo] : '' }
+												{/* {(this.state.page !== null) ? this.state.images[this.state.page.logo] : '' } */}
 												{	
-													(this.state.page !== null) 
+													(this.props.pageUserInfo !== null) 
 													?
-														<img src={this.state.images[this.state.page.logo]} width="102px"/>
+														<img src={this.props.images[this.props.pageUserInfo.logo]} width="102px"/>
 													:   ''
 												}
 											</td>
@@ -258,8 +239,9 @@ class PageConfig extends Component {
 export default connect(
 	state => ({
 		isLoggedIn: state.Auth.idToken !== null ? true : false,
-
-	}),{setupPage})(PageConfig);
+		pageUserInfo: state.PageConfigReducer.user_page,
+		images: state.PageConfigReducer.images,
+	}),{setupPage, getPageInfo, getImages})(PageConfig);
 
 
 const PageConfigWrapper = styled.div`
