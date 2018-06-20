@@ -32,15 +32,22 @@ class PageConfig extends Component {
 		getPageByUserId(data._id)
 			.then((resp) => {
 				if(resp.data.length > 0){
-					this.setState({page: resp.data[0]});
+
+					setTimeout(()=>{
+						this.setState({page: resp.data[0]});
+					},500)
+
 				}
 			})
 			.catch((err)=>{
 				console.log(err.response)
 			})
-
-		const images = this.importAll(require.context('../../image/logos/', false, /\.(png|jpe?g)$/));
-		this.setState({ images: images });
+			const images = this.importAll(require.context('../../image/logos/', false, /\.(png|jpe?g)$/));
+			
+			setTimeout(()=>{
+				this.setState({ images: images });
+			},500)
+			
 	}
 
 	importAll = (r) => {
@@ -206,6 +213,8 @@ class PageConfig extends Component {
 						<Col md={12} sm={12} xs={24} style={colStyle}>
 							<Box title="Añade tu Logo:" subtitle="En esta sección puedes añadir el logo de tu compañia, caso contrario saldrá el logo de Kazamap.com. Te recomendamos añadir el tuyo propio para darle identidad a tu página.">
 								
+								{console.log('page imaages:::',this.state.page,  this.state.images )}
+
 								<table>
 									<tbody>
 										<tr>
