@@ -26,6 +26,7 @@ const validateToken =  (req, res, next) => {
 
         // sets the decoded JWT/user object on the request object for use in next middleware.
         req.decoded = decoded;
+        req.body = req.body;
         next();
     });
 

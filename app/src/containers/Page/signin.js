@@ -11,7 +11,7 @@ import styled from "styled-components";
 import Notification from '../../components/notification';
 import { getUsernameFromUrl } from '../../../src/helpers/utility';
 
-const { login, setLoading } = authAction;
+const { login, setLoading, tokenExpired } = authAction;
 const { clearMenu } = appAction;
 
 class SignIn extends Component {
@@ -38,12 +38,14 @@ class SignIn extends Component {
 			this.setState({ redirectToReferrer: true });
 		}
 	}
+
 	clearLocalAndSessionStorage(){
 		localStorage.removeItem('id_token');
 		localStorage.removeItem('access_token');
 		localStorage.removeItem('expires_at');
 		sessionStorage.clear();
 	}
+
 	handleLogin = () => {
 		this.clearLocalAndSessionStorage();
 		const { login } = this.props;
@@ -103,6 +105,7 @@ class SignIn extends Component {
 		if (redirectToReferrer) {
 			return <Redirect to={from} />;
 		}
+
 		return (
 			<SigInForm>
 				<SignInStyleWrapper className="isoSignInPage">
@@ -155,7 +158,7 @@ export default connect(
 		isLoggedIn: state.Auth.idToken !== null ? true : false,
 		loading: state.Auth.loading,
 	}),
-	{ login, clearMenu, setLoading }
+	{ login, clearMenu, setLoading, tokenExpired }
 )(SignIn);
 
 

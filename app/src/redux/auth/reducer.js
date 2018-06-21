@@ -4,6 +4,7 @@ const initState = {
 	idToken: null,
 	user_data: null,
 	loading: null,
+	token_expired:null,
 };
 
 export default function authReducer(state = initState, action) {

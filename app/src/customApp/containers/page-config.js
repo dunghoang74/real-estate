@@ -1,20 +1,24 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Input, Button, Alert, Upload, Icon, message } from 'antd';
-// import { Button as ButtonB } from 'react-bootstrap';
-import LayoutContentWrapper from "../../components/utility/layoutWrapper.js";
-import LayoutContent from "../../components/utility/layoutContent";
+import { Row, Col, Input, Button, Icon } from 'antd';
+import { Button as ButtonB } from 'react-bootstrap';
 import Box from '../../components/utility/box';
 import LayoutWrapper from '../../components/utility/layoutWrapper.js';
-import ContentHolder from '../../components/utility/contentHolder';
 import basicStyle from '../../settings/basicStyle';
-import IntlMessages from '../../components/utility/intlMessages';
-import Card from '../../containers/Uielements/Card/card.style';
 import styled from "styled-components";
 import pageConfig from '../../redux/pageConfig/actions';
-import { getUsernameFromUrl, getPageByUserId } from '../../../src/helpers/utility';
+import Dropzone from 'react-dropzone';
+import request from 'superagent';
+import {Image, Transformation} from 'cloudinary-react';
+import Notification from '../../components/notification';
+import { getUsernameFromUrl } from '../../../src/helpers/utility';
+import { CompactPicker } from 'react-color';
 
-const {setupPage, getPageInfo, getImages, uploadLogo, loading} = pageConfig;
+const {setupPage, getPageInfo, uploadLogo, uploadHeader, loading} = pageConfig;
+
+const CLOUDINARY_UPLOAD_PRESET = 'ew0v9j7f';
+const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/kazamap/upload';
+
 
 class PageConfig extends Component {
 	state = {
@@ -26,12 +30,20 @@ class PageConfig extends Component {
 	};
 
 	componentDidMount(){
-
-		this.props.getImages();
 		let data = JSON.parse(sessionStorage.getItem('usr'));
 		this.props.getPageInfo(data._id);
-		this.props.loading('plus');
+		this.props.loading('plus', 'logo');
+		this.props.loading('plus', 'header');
+	}
 
+	componentWillReceiveProps(nextProps){
+		if(nextProps.token_expired){
+			Notification(
+				'error',
+				"Su session ha terminado. Porfavor Ingrese nuevamente.",
+			);
+			this.props.history.push('/' + getUsernameFromUrl() + '/signin');
+		}
 	}
 
 	onClose = function (e) {
@@ -42,77 +54,6 @@ class PageConfig extends Component {
 			btn.style.display = "none";
 		}
 	};
-
-	getBase64 = (img, callback) => {
-		const reader = new FileReader();
-		reader.addEventListener('load', () => callback(reader.result));
-		reader.readAsDataURL(img);
-	}
-
-	beforeUpload = (file) => {
-		const isJPG = (file.type === 'image/jpeg' || file.type === 'image/jpg');
-		const isPNG = file.type === 'image/png';
-
-		if (!isJPG && !isPNG) {
-			message.error('Solo se aceptan imágenes JPG y PNG');
-		}
-
-		const isLt2M = file.size / 1024 / 1024 < 1.5;
-		const imageSize = file.size / 1024 / 1024;
-		if (!isLt2M) {
-			message.error('EL logo debe de pesar menos de 1.5MB! y su image pesa: ' + imageSize.toFixed(1));
-		}
-
-		return ((isJPG || isPNG) && isLt2M);
-	}
-
-	onUpload = ({ file, onSuccess }) => {
-		
-		this.props.uploadLogo(file);
-
-		this.setState({file:file});
-
-		// uploadLogo(file)
-		// 	.then((resp) => {
-		// 		onSuccess('done', file);
-		// 		//setup page configuration
-		// 		console.log('upload response:::', resp.data)
-		// 		this.props.setupPage(resp.data);
-		// 	})
-		// 	.catch((err) => {
-		// 		this.setState({
-		// 			loading: false,
-		// 		})
-
-		// 		if(err.response !== undefined && (err.response.status === 403 || err.response.status === 499)){
-
-		// 			window.location = '/' + getUsernameFromUrl() + '/signin';
-
-		// 		}else{
-		// 			message.error('Hubo un error al subir el logo. Refresque la página e intente denuevo.');
-		// 		}
-
-		// 	});
-
-	}
-
-	onSuccess = (file) => {
-		return file;
-	}
-
-	handleChange = (info) => {
-		if (info.file.status === 'uploading') {
-			this.setState({ loading: true });
-			return;
-		}
-		if (info.file.status === 'done') {
-			this.getBase64(info.file.originFileObj, imageUrl => this.setState({
-				imageUrl,
-				loading: false,
-			}));
-		}
-	}
-
 
 	copyLink = () => {
 		const el = document.createElement('input');
@@ -127,33 +68,66 @@ class PageConfig extends Component {
 		},900)
 	}
 
-	render() {
-		if(this.state.file !== null){
-			console.log('now is plus bcause is uploades');
-			this.onSuccess('done', this.state.file);
-		}
-		if(this.props.pageUserInfo !== null){
-			console.log('pageUserinfo:::', this.props.pageUserInfo.logo);
-		}
-		console.log('al images:::', this.props.images)
-		console.log('loading:::', this.props.loading_status)
+	onLogoDrop = (files) => {
+		this.props.loading('loading', 'logo');
+		this.handleLogoUpload(files[0]);
+	}
 
-		const { colStyle, gutter, pageTitle } = basicStyle;
-		const uploadButton = (
-			<div>
-				<Icon type={this.props.loading_status} />
-				<div className="ant-upload-text">Subir Logo</div>
-			</div>
-		);
-		const imageUrl = this.state.imageUrl;
+	handleLogoUpload(file) {
+		let upload = request.post(CLOUDINARY_UPLOAD_URL)
+			.field('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+			.field('folder', 'logos')
+			.field('tags', 'logo,page')
+			.field('file', file);
+
+		upload.end((err, response) => {
+			if (err) {
+				console.error(err);
+				this.props.loading('plus', 'logo');
+			}
+
+			if (response.body.secure_url !== '') {
+				this.props.uploadLogo(response.body);
+			}
+		});
+	}
+
+	onHeaderDrop = (files) => {
+		this.handleHeaderUpload(files[0]);
+	}
+
+	handleHeaderUpload(file) {
+		this.props.loading('loading', 'header');
+
+		let upload = request.post(CLOUDINARY_UPLOAD_URL)
+			.field('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+			.field('folder', 'headers')
+			.field('tags', 'header,page')
+			.field('file', file);
+
+		upload.end((err, response) => {
+			if (err) {
+				console.error(err);
+				this.props.loading('plus', 'header');
+			}
+
+			if (response.body.secure_url !== '') {
+
+				this.props.uploadHeader(response.body);
+			}
+		});
+	}
+
+	render() {
+		const { colStyle, gutter } = basicStyle;
 
 		return (
-			<PageConfigWrapper style={{ height: "100vh" }}>
+			<PageConfigWrapper style={{ height: "auto" }}>
 				<LayoutWrapper>
 					<h1 >Configuración de tu Página.</h1>
 					<Row gutter={gutter} justify="start">
 						
-						<Col md={12} sm={12} xs={24} style={colStyle}>
+						<Col md={12} sm={12} xs={24} style={colStyle} className="fullCol">
 							<Box
 								title="Dirección actual de tu página"
 								subtitle="Añade tu propio logo y propiedades a tu página"
@@ -182,7 +156,7 @@ class PageConfig extends Component {
 								</table>
 								<br />
 								
-								<div id="btnLearn">
+								{/* <div id="btnLearn">
 									<Card title="¿Sabias?" extra={<a onClick={this.onClose}>X</a>}>
 										<Alert
 											message=""
@@ -199,41 +173,137 @@ class PageConfig extends Component {
 											<Button type="primary" className="btnLearn">Aprende Como</Button>
 										
 									</Card>
-								</div>
+								</div> */}
 							</Box>
 						</Col>
+					</Row>
+
+					<Row gutter={gutter} justify="start">
 						<Col md={12} sm={12} xs={24} style={colStyle}>
 							<Box title="Añade tu Logo:" subtitle="En esta sección puedes añadir el logo de tu compañia, caso contrario saldrá el logo de Kazamap.com. Te recomendamos añadir el tuyo propio para darle identidad a tu página.">
-
 								<table>
 									<tbody>
 										<tr>
 											<td>
+												
+												<Dropzone
+													multiple={false}
+													className="dropZone"
+													accept="image/jpg,image/png,image/jpeg"
+													onDrop={this.onLogoDrop.bind(this)}>
+													<div className="dropZoneTexts">
+														<div>Subir Logo</div>
+														<Icon type={this.props.loading_logo} />
+														<div>Arrastrar & Soltar</div>
+													</div>
+												</Dropzone>
+
+											</td>	
+											<td>
 												{	
-													(this.props.pageUserInfo !== null) 
+													(this.props.pageUserInfo !== null && 
+														this.props.pageUserInfo !== undefined &&
+														this.props.pageUserInfo.logo)
 													?
-														<img src={this.props.images[this.props.pageUserInfo.logo]} width="102px"/>
+														<Image cloudName="kazamap" publicId={this.props.pageUserInfo.logo.public_id} >
+															<Transformation height="100" width="200"  background="white" crop="lpad" />
+														</Image>
 													:   ''
 												}
 											</td>
-											<td>
-												<Upload
-													name="avatar"
-													listType="picture-card"
-													className="avatar-uploader"
-													showUploadList={false}
-													action="memory"
-													beforeUpload={this.beforeUpload}
-													onChange={this.handleChange}
-													customRequest={this.onUpload}
-												>
-													{imageUrl ? <img src={imageUrl} alt="avatar" width="100px" /> : uploadButton}
-												</Upload>
-											</td>		
+												
 										</tr>	
 									</tbody>
 								</table>	
 
+							</Box>
+						</Col>
+						<Col md={12} sm={12} xs={24} style={colStyle}>
+							<Box title="Añade Imagen Principal:" subtitle="Esta sección representa los colores principales de tu página.">
+								<table style={{width:"100%", border:"0px solid black"}}>
+									<tbody>
+										<tr>
+											<td>
+											
+												<CompactPicker
+													// color={ this.state.background }
+													// onChangeComplete={ this.handleChangeComplete }
+												/>
+											</td>
+											<td style={{textAlign:"right"}}>
+											
+												<CompactPicker
+													// color={ this.state.background }
+													// onChangeComplete={ this.handleChangeComplete }
+												/>
+											</td>	
+										</tr>
+										<tr>
+											<td style={{ textAlign: "left" }} >
+											
+													{/* <Button className="exBtn"  
+															type="primary"
+															
+													>Boton Primer Color</Button> */}
+													<ButtonB bsStyle="primary" className="exBtn">
+														Boton Primer Color
+													</ButtonB>
+											</td>
+											<td style={{ textAlign: "right" }} >
+											
+													{/* <Button className="exBtn" 
+															type="primary"
+															onClick={this.copyLink}
+													>Boton Segundo Color</Button> */}
+													<ButtonB bsStyle="success" className="exBtn">
+														Boton Segundo Color
+													</ButtonB>
+											</td>
+
+										</tr>	
+									</tbody>
+								</table>	
+
+							</Box>
+						</Col>
+					</Row>
+					
+					<Row className="fullCol">	
+						<Col md={12} sm={12} xs={24} style={colStyle} className="fullCol">
+							<Box title="Añade Imagen Principal:" subtitle="Esta sección representa la imagen principal de tu página.">
+								<table>
+									<tbody>
+										<tr>
+											<td>
+												<Dropzone
+													multiple={false}
+													className="dropZone"
+													accept="image/jpg,image/png,image/jpeg"
+													onDrop={this.onHeaderDrop.bind(this)}>
+													<div className="dropZoneTexts">
+														<div>Subir Imagen</div>
+														<Icon type={this.props.loading_header} />
+														<div>Arrastrar & Soltar</div>
+													</div>
+												</Dropzone>
+
+											</td>
+											<td>
+												{	
+													(this.props.pageUserInfo !== null && 
+														this.props.pageUserInfo !== undefined &&
+														this.props.pageUserInfo.header !== undefined) 
+													?
+														<Image cloudName="kazamap" publicId={this.props.pageUserInfo.header.public_id} >
+															<Transformation  width="1100" height="500"  background="white" crop="pad" />
+														</Image>
+													:   ''
+												}
+											</td>		
+										</tr>
+											
+									</tbody>
+								</table>
 							</Box>
 						</Col>
 					</Row>
@@ -247,16 +317,16 @@ class PageConfig extends Component {
 export default connect(
 	state => ({
 		isLoggedIn: state.Auth.idToken !== null ? true : false,
-		pageUserInfo: state.PageConfigReducer.user_page,
-		images: state.PageConfigReducer.images,
-		loading_status: state.PageConfigReducer.loading,
-
+		pageUserInfo:   state.PageConfigReducer.user_page,
+		loading_logo:   state.PageConfigReducer.loading_logo,
+		loading_header: state.PageConfigReducer.loading_header,
+		token_expired:  state.PageConfigReducer.token_expired,
 	}),
 	{setupPage, 
 	getPageInfo, 
-	getImages, 
 	uploadLogo,
 	loading,
+	uploadHeader,
 	})(PageConfig);
 
 
@@ -270,6 +340,36 @@ const PageConfigWrapper = styled.div`
 	}
 	.pageTitle{
 		height:0px !important;
+	}
+
+	.dropZone{
+		position: relative;
+		border: 3px dashed green;
+		width: 200px;
+		height: 100px;
+		border-radius: 5px;
+		background-color: #F0F0F0;
+		cursor: pointer; 
+	}
+	.dropZoneTexts{
+		border:0px solid black;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 80%;
+		height: 70%;
+		margin: auto;
+		text-align: center;
+		cursor: pointer; 
+	}
+	.fullCol{
+		width:100%;
+	}
+
+	.exBtn{
+		width:245px;
 	}
 
 `;

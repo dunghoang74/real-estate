@@ -1,4 +1,4 @@
-import { all, takeEvery, fork } from 'redux-saga/effects';
+import { all, takeEvery, put, fork } from 'redux-saga/effects';
 import actions from './actions';
 
 export function* userPageConfiguration() {    
@@ -9,8 +9,27 @@ export function* userPageConfiguration() {
     });
 }
 
+// export function* tokenExpired(status) {
+	
+//     console.log('va yeilddd ..llego a saga auth');
+    
+// 	yield takeEvery(actions.TOKEN_EXPIRED, function* () {
+
+//         console.log('llego a saga auth');
+        
+// 		if(!status){
+// 			yield put({ type: actions.TOKEN_EXPIRED, token_expired:false });
+// 		}else{
+// 			yield put({ type: actions.TOKEN_EXPIRED, token_expired:true });
+			
+// 		}
+		
+// 	});
+// }
+
 export default function* rootSaga() {
     yield all([
         fork(userPageConfiguration),
+        // fork(tokenExpired),
     ]);
 }

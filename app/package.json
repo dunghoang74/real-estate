@@ -11,6 +11,7 @@
     "chart.js": "^2.5.0",
     "classnames": "^2.2.5",
     "clone": "^2.1.1",
+    "cloudinary-react": "^1.0.6",
     "d3-shape": "^1.0.6",
     "enzyme-adapter-react-16": "^1.1.1",
     "enzyme-react-intl": "^1.4.8",
@@ -30,18 +31,20 @@
     "polished": "^1.7.0",
     "postcss-inline-rtl": "^0.9.8",
     "prop-types": "^15.5.10",
-    "react": "^16.2.0",
+    "react": "^16.4.1",
     "react-addons-shallow-compare": "^15.5.2",
     "react-big-calendar": "^0.17.0",
     "react-bootstrap": "^0.32.1",
     "react-chartjs-2": "^2.5.7",
     "react-codemirror": "^1.0.0",
+    "react-color": "^2.14.1",
     "react-count-down": "^1.1.0",
     "react-dates": "12.2.4",
     "react-dnd": "^2.3.0",
     "react-dnd-html5-backend": "^2.3.0",
     "react-dom": "^16.2.0",
     "react-drawer": "^1.2.5",
+    "react-dropzone": "^4.2.11",
     "react-dropzone-component": "^3.0.0",
     "react-element-resize": "^0.2.1",
     "react-error-overlay": "1.0.6",
@@ -86,6 +89,7 @@
     "smooth-scrollbar": "^8.2.5",
     "styled-components": "^2.2.1",
     "styled-theme": "^0.3.3",
+    "superagent": "^3.8.3",
     "uppy": "0.18.0"
   },
   "devDependencies": {
@@ -97,8 +101,7 @@
     "leaflet-routing-machine": "^3.2.5",
     "leaflet.markercluster": "^1.0.6",
     "react-app-rewired": "1.4.0",
-    "redux-mock-store": "^1.2.3",
-    "redux-logger": "^3.0.6"
+    "redux-mock-store": "^1.2.3"
   },
   "scripts": {
     "start": "react-app-rewired start",

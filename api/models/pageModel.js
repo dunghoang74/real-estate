@@ -4,7 +4,9 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const PageSchema = new Schema({
     logo: {
-        type: String,
+        public_id: String,
+        secure_url: String,
+        response: Schema.Types.Mixed,
     },
     color1: {
         type: String,
@@ -16,7 +18,9 @@ const PageSchema = new Schema({
         type: String,
     },
     header: {
-        type: String,
+        public_id: String,
+        secure_url: String,
+        response: Schema.Types.Mixed,
     },
     footer: {
         type: String,

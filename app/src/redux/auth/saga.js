@@ -4,6 +4,8 @@ import { getToken, clearToken } from '../../helpers/utility';
 import actions from './actions';
 import axios from 'axios';
 import config from '../../config';
+import { getUsernameFromUrl } from '../../../src/helpers/utility';
+
 
 const uri = config.end_point_uri;
 const fakeApiCall = true; // auth0 or express JWT
@@ -81,7 +83,6 @@ export default function* rootSaga() {
 		fork(checkAuthorization),
 		fork(loginRequest),
 		fork(loginSuccess),
-		// fork(loginError),
 		fork(logout)
 	]);
 }

@@ -42,11 +42,62 @@ const uploadLogo = (req, res, next) => {
         .exec((err, resp) => {
             const NewPagModel = new PageModel();
             NewPagModel._user = req.decoded.user._id;
-            NewPagModel.logo = req.file.filename;
+            NewPagModel.logo.public_id=req.body.public_id;
+            NewPagModel.logo.secure_url= req.body.secure_url;
+            NewPagModel.logo.response= req.body;
 
             if(resp.length > 0 && err === null){
                 
-                PageModel.findOneAndUpdate({ _user: PageModel._user}, {logo:NewPagModel.logo}, {new: true})
+                PageModel.findOneAndUpdate({ _user: PageModel._user}, 
+                    {  
+                        logo:{
+                            public_id:req.body.public_id,
+                            secure_url: req.body.secure_url,
+                            response: req.body,
+                        } 
+                        
+                    }, {new: true})
+                    .populate()
+                    .exec((err, response) => {
+                        if (err) return  res.status(500).send(err);
+                        res.status(200).send(response);
+                });
+
+            }else{
+                NewPagModel.save()
+                    .then(newImg => {
+                        res.status(200).send(newImg)
+                    })
+                    .catch(err => {
+                        res.status(500).send({error: "Something went wrong saving your logo", info: err});
+                    });
+            }
+        });
+}
+
+const uploadHeader = (req, res, next) => {
+    PageModel._user = req.decoded.user._id;
+
+    PageModel.find({ _user: PageModel._user })
+        .populate()
+        .exec((err, resp) => {
+            const NewPagModel = new PageModel();
+            NewPagModel._user = req.decoded.user._id;
+            NewPagModel.header.public_id=req.body.public_id;
+            NewPagModel.header.secure_url= req.body.secure_url;
+            NewPagModel.header.response= req.body;
+
+            if(resp.length > 0 && err === null){
+                
+                PageModel.findOneAndUpdate({ _user: PageModel._user}, 
+                    {  
+                        header:{
+                            public_id:req.body.public_id,
+                            secure_url: req.body.secure_url,
+                            response: req.body,
+                        } 
+                        
+                    }, {new: true})
                     .populate()
                     .exec((err, response) => {
                         if (err) return  res.status(500).send(err);
@@ -72,6 +123,6 @@ const deletePage = (req, res) => {
     //     .exec((err, resp) => res.status(200).send(resp));
 };
 
-module.exports = {createPage, getPage, updatePage, deletePage, uploadLogo};
+module.exports = {createPage, getPage, updatePage, deletePage, uploadLogo, uploadHeader};
 
 

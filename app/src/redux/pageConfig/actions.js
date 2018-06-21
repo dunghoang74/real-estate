@@ -1,12 +1,17 @@
 import axios from 'axios';
 import config from '../../../src/config';
+import {getUsernameFromUrl} from '../../../src/helpers/utility';
+import { Redirect } from "react-router-dom";
+
+
 const uri = config.end_point_uri;
+const defaultVal = 'plus';
 
 const pageActions = {
     SETUP_PAGE_CONFIG: 'SETUP_PAGE_CONFIG',
-    GET_USER_IMAGES: 'GET_USER_IMAGES',
     UPLOAD_LOGO: 'UPLOAD_LOGO',
     LOADING: 'LOADING',
+    TOKEN_EXPIRED: 'TOKEN_EXPIRED',
 
     setupPage: (page) => {
         return (dispatch) => {
@@ -17,6 +22,7 @@ const pageActions = {
             });
         }
     },
+
     getPageInfo:(userId) => {
         const pageInfo = axios.get(`${uri}/api/page/${userId}`);
         
@@ -40,47 +46,31 @@ const pageActions = {
 
         }
     },
-    getImages:() => {        
-        return (dispatch) => {
 
-            const importAll = (r) => {
-                let images = {};
-                r.keys().map((item) => { images[item.replace('./', '')] = r(item); });
-                return images;
-            }
-
-            const images = importAll(require.context('../../image/logos/', false, /\.(png|jpe?g)$/));
-            dispatch({
-                type: pageActions.GET_USER_IMAGES,
-                images: images,
-            });
-        }
-    },
     uploadLogo:(file) => {
-        let data = new FormData();
-	
-	    data.append('logoPage', file); //logoPage is configured at the router
-
+    
         let config = {
                 headers: { 
-                            'Content-Type': 'multipart/form-data',
+                            'Content-Type': 'application/json',
                             'Authorization': localStorage.getItem('id_token')
                         },
                 withCredentials: true
         };
 
-        const upload = axios.post(`${uri}/api/page/upload-logo`, data, config)
-            
+        const upload = axios.post(`${uri}/api/page/upload-logo`, file, config )
+        
         return (dispatch) => {
 
             dispatch({
                 type: pageActions.LOADING,
-                loading: 'loading',
+                loading_logo: 'loading',
+
+                loading_header: defaultVal,
             });
 
             upload
-            .then(({resp}) => {
-                
+            .then((resp) => {
+
                 sessionStorage.setItem('u_p', JSON.stringify(resp.data));
 
                 dispatch({
@@ -89,28 +79,107 @@ const pageActions = {
                 });
                 dispatch({
                     type: pageActions.LOADING,
-                    loading: 'plus',
+                    loading_logo: 'plus',
+
+                    loading_header: defaultVal,
                 });
 
             })
             .catch(err => {
+                if(err.response !== undefined && (err.response.status === 403 || err.response.status === 499)){
+                    
+                    dispatch({
+                        type: pageActions.TOKEN_EXPIRED,
+                        token_expired: true,
+                    });                    
 
+                }else{
+
+                    console.log('errororor::::', err.response)
+                    // message.error('Hubo un error al subir el logo. Refresque la página e intente denuevo.');
+                    // dispatch({type: ERROR_UPLOAD, upload_error: err});
+
+                }
+
+                
+
+            });
+
+        }
+    },
+
+    uploadHeader:(file) => {
+        let config = {
+                headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': localStorage.getItem('id_token')
+                        },
+                withCredentials: true
+        };
+
+        const upload = axios.post(`${uri}/api/page/upload-header`, file, config )
+        
+        return (dispatch) => {
+
+            dispatch({
+                type: pageActions.LOADING,
+                loading_header: 'loading',
+
+                loading_logo: defaultVal,
+            });
+
+            upload
+            .then((resp) => {
+
+                sessionStorage.setItem('u_p', JSON.stringify(resp.data));
+
+                dispatch({
+                    type: pageActions.SETUP_PAGE_CONFIG,
+                    user_page: resp.data,
+                });
+
+                dispatch({
+                    type: pageActions.LOADING,
+                    loading_header: 'plus',
+
+                    loading_logo: defaultVal,
+                });
+
+            })
+            .catch(err => {
+                console.log('error header image:::',err)
                 //dispatch({type: ERROR_GETTING_LEADS, payload: err});
 
             });
 
         }
     },
-    loading:(status) => {
-        console.log('statusloading:::', status)
+
+    loading:(status, section) => {
         return (dispatch) => {
-            dispatch({
+
+            if(section === 'logo'){
+                dispatch({
                     type: pageActions.LOADING,
-                    loading: status,
+                    loading_logo: status,
+
+                    loading_header: defaultVal,
                 });
             }
+
+            if(section === 'header'){
+                dispatch({
+                    type: pageActions.LOADING,
+                    loading_header: status,
+
+                    loading_logo: defaultVal,
+                });
+            }
+        }
+            
     },
 
 };
+
 export default pageActions;
 
