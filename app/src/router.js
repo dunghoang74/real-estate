@@ -37,8 +37,20 @@ const PublicRoutes = ({ history, isLoggedIn }) => {
 		// check if the user exist
 		// if no exist push to /app
 		checkUsernameFromUrl()
-			.then(({ data }) => { (data === null) ? history.push('/app') : '' })
-			.catch(err => { history.push('/app') });
+			.then(({ data }) => { 
+				if(data === null) {
+					history.push('/app')
+				}else {
+					console.log('pdata.page:::', data._page)
+					sessionStorage.setItem('u_p', JSON.stringify(data._page));
+				}
+			 }) 
+			.catch(err => { 
+				console.log(err.response)
+				// history.push('/app') 
+			});
+	}else{
+		sessionStorage.removeItem('u_p');
 	}
 
 	return (

@@ -1,4 +1,6 @@
 const PageModel = require('../models/pageModel');
+const UserModel = require('../models/userModel');
+
 const multer = require('multer');
 
 const createPage = (req, res, next) => {
@@ -66,10 +68,11 @@ const uploadLogo = (req, res, next) => {
             }else{
                 NewPagModel.save()
                     .then(newImg => {
-                        res.status(200).send(newImg)
+                        addPageInUser(newImg._id, req.decoded.user._id);
+                        res.status(200).send(newImg);
                     })
                     .catch(err => {
-                        res.status(500).send({error: "Something went wrong saving your logo", info: err});
+                        res.status(500).send({error: "Something went wrong saving your logo", info: err.response});
                     });
             }
         });
@@ -107,6 +110,7 @@ const uploadHeader = (req, res, next) => {
             }else{
                 NewPagModel.save()
                     .then(newImg => {
+                        addPageInUser(newImg._id, req.decoded.user._id);
                         res.status(200).send(newImg)
                     })
                     .catch(err => {
@@ -116,6 +120,56 @@ const uploadHeader = (req, res, next) => {
         });
 }
 
+const uploadColors = (req, res, next) => {
+    PageModel._user = req.decoded.user._id;
+
+    PageModel.find({ _user: PageModel._user })
+        .populate()
+        .exec((err, resp) => {
+            const NewPagModel = new PageModel();
+            NewPagModel._user = req.decoded.user._id;
+            NewPagModel.color1=req.body.color1;
+            NewPagModel.color2= req.body.color2;
+
+            if(resp.length > 0 && err === null){
+                
+                PageModel.findOneAndUpdate({ _user: PageModel._user}, 
+                    {  
+                        color1:req.body.color1,
+                        color2: req.body.color2,
+
+                    }, {new: true})
+                    .populate()
+                    .exec((err, response) => {
+                        if (err) return  res.status(500).send(err);
+                        res.status(200).send(response);
+                });
+
+                }else{
+                    NewPagModel.save()
+                        .then(newImg => {
+                            addPageInUser(newImg._id, req.decoded.user._id);
+                            res.status(200).send(newImg)
+                        })
+                        .catch(err => {
+                            res.status(500).send({error: "Something went wrong saving your logo", info: err});
+                        });
+                }
+        });
+}
+
+const addPageInUser = (pageId, userId) => {
+    UserModel.findOneAndUpdate({ _id: userId}, 
+        {
+            _page: pageId
+
+        }, {new: false})
+        .exec((err, response) => {
+            if (err) console.log('error:', err);
+            return true
+    });
+}
+
 
 const deletePage = (req, res) => {
     // PageModel.find({})
@@ -123,6 +177,14 @@ const deletePage = (req, res) => {
     //     .exec((err, resp) => res.status(200).send(resp));
 };
 
-module.exports = {createPage, getPage, updatePage, deletePage, uploadLogo, uploadHeader};
+module.exports = {createPage, 
+                getPage, 
+                updatePage, 
+                deletePage, 
+                uploadLogo, 
+                uploadHeader,
+                uploadColors,
+                addPageInUser,
+            };
 
 

@@ -12,6 +12,7 @@ const pageActions = {
     UPLOAD_LOGO: 'UPLOAD_LOGO',
     LOADING: 'LOADING',
     TOKEN_EXPIRED: 'TOKEN_EXPIRED',
+    SAVED_COLORS:'SAVED_COLORS',
 
     setupPage: (page) => {
         return (dispatch) => {
@@ -25,25 +26,23 @@ const pageActions = {
 
     getPageInfo:(userId) => {
         const pageInfo = axios.get(`${uri}/api/page/${userId}`);
-        
+
         return (dispatch) => {
             pageInfo
             .then(({data}) => {
                 
-                sessionStorage.setItem('u_p', JSON.stringify(data[0]));
+                if(data !== null){
+                    sessionStorage.setItem('u_p', JSON.stringify(data[0]));
 
-                dispatch({
-                    type: pageActions.SETUP_PAGE_CONFIG,
-                    user_page: data[0],
-                });
-
-                console.log('getpageuserinfo:::', data[0]);
-                    
+                    dispatch({
+                        type: pageActions.SETUP_PAGE_CONFIG,
+                        user_page: data[0],
+                    });
+                }                
             })
             .catch(err => {
                 //dispatch({type: ERROR_GETTING_LEADS, payload: err});
             });
-
         }
     },
 
@@ -148,6 +147,46 @@ const pageActions = {
             })
             .catch(err => {
                 console.log('error header image:::',err)
+                //dispatch({type: ERROR_GETTING_LEADS, payload: err});
+
+            });
+
+        }
+    },
+
+    uploadColors: (colors) => {
+        let config = {
+            headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': localStorage.getItem('id_token')
+                    },
+            withCredentials: true
+        };
+
+        const upload = axios.post(`${uri}/api/page/upload-colors`, colors, config )
+        
+        return (dispatch) => {
+
+            upload
+            .then((resp) => {
+
+                sessionStorage.setItem('u_p', JSON.stringify(resp.data));
+
+                dispatch({
+                    type: pageActions.SAVED_COLORS,
+                    color_saved: true,
+                });
+
+                setTimeout(()=>{
+                    dispatch({
+                        type: pageActions.SAVED_COLORS,
+                        color_saved: false,
+                    });
+                },100)
+
+            })
+            .catch(err => {
+                console.log('error header colors:::',err)
                 //dispatch({type: ERROR_GETTING_LEADS, payload: err});
 
             });

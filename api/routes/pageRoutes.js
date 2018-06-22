@@ -13,6 +13,8 @@ appRouter.route('/upload-logo').post(jwt.validateToken, pageController.uploadLog
 
 appRouter.route('/upload-header').post(jwt.validateToken, pageController.uploadHeader);
 
+appRouter.route('/upload-colors').post(jwt.validateToken, pageController.uploadColors);
+
 appRouter.route('/:pageId').put(pageController.updatePage);
 
 appRouter.route('/:pageId').delete(pageController.deletePage);

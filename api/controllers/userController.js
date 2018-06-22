@@ -32,7 +32,7 @@ const checkAvalability = (req, res) => {
     const userName = req.params.username;
 
     UserModel.findOne({username:userName})
-        .populate()
+        .populate('_page')
         .then(resp => res.json(resp));
     
 };

@@ -9,11 +9,17 @@ import { Modal, Button, ButtonToolbar, DropdownButton, MenuItem } from 'react-bo
 import styled from "styled-components";
 import RegistrationModal from '../modal/RegistrationModal';
 import logo from '../../image/logo-min.png';
-import { getUsernameFromUrl } from '../../../src/helpers/utility';
+import { getUsernameFromUrl, getPageResource } from '../../../src/helpers/utility';
 import { Select } from 'antd';
+import pageActions from '../../redux/pageConfig/actions';
+import {Image, Transformation} from 'cloudinary-react';
 
 const {updateStatus} = modalActions;
 const {loggOutUser, checkLoginStatus} = userActions;
+const { getPageInfo } = pageActions;
+
+const CLOUDINARY_UPLOAD_PRESET = 'ew0v9j7f';
+const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/kazamap/upload';
 
 class Header extends Component {
 
@@ -22,27 +28,24 @@ class Header extends Component {
     }
 
     componentDidMount(){
-
         this.props.checkLoginStatus();
-
-        console.log('page_config:::', this.props.userPageConfig)
     }
 
     handleShowRegistration = () => {
         this.props.updateStatus(true)
     };
 
-    handleSelect = (event) => {
-        console.log(event.key)
-    }
-
     handleLoggOutUser = () => {
         this.props.loggOutUser();
     }
 
     render() {
-        return (
 
+        let logo = getPageResource('logo');
+        let color1 = getPageResource('colors')[0].color1;
+        let color2 = getPageResource('colors')[1].color2;
+
+        return (
             <HeaderStyleWrapper className="container container-wrapper">
             
                 <header className="header">
@@ -51,19 +54,44 @@ class Header extends Component {
                             <section className="header-inner">
                                 <div className="container">
                                     <div className="logo pull-left pull-sm-up col-sm-6 col-xs-12  text-left">
-                                        <Link to="/">
-                                            <img src={logo}  />
-                                            <img src={logo} width="100" className="mini-logo" />
+                                        <Link to={`/${this.state.usernameUri}`}>
+
+                                            <Image cloudName="kazamap" publicId={logo} >
+                                                <Transformation width="193" height="100"/>
+                                            </Image>
+
+                                            <Image cloudName="kazamap" publicId={logo} className="mini-logo" ></Image>
+
                                         </Link>
                                     </div>
 
                                     <div className="pull-right pull-sm-up col-sm-6 col-xs-12 menuBtns">
                                         <ButtonToolbar>
                                             
-                                            {(!this.props.userLoggedIn) ? <Link to={`/${this.state.usernameUri}/signin`}><Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.signInC" /></Button></Link> :  <Button bsStyle="primary" className="fixPrimary"><IntlMessages id="header.addListing" /></Button>} 
+                                            {(!this.props.userLoggedIn) 
+                                                ? 
+                                                    <Link to={`/${this.state.usernameUri}/signin`}>
+                                                        <Button bsStyle="primary" className="fixPrimary" style={{backgroundColor:color1}}>
+                                                            <IntlMessages id="header.signInC" />
+                                                        </Button>
+                                                    </Link> 
+                                                :  
+                                                    <Button bsStyle="primary" className="fixPrimary" style={{backgroundColor:color1}}>
+                                                        <IntlMessages id="header.addListing" />
+                                                    </Button>
+                                            } 
 
-
-                                             {(!this.props.userLoggedIn) ?  <Button bsStyle="success" onClick={() => { this.handleShowRegistration() }}> <IntlMessages id="header.registerC" /></Button> :  <Button bsStyle="success"> <IntlMessages id="header.searchProperty"/></Button>}     
+                                            {(!this.props.userLoggedIn) 
+                                                ?  
+                                                    <Button bsStyle="success" onClick={() => { this.handleShowRegistration() }} 
+                                                            style={{backgroundColor:color2, borderColor:color2}}> 
+                                                        <IntlMessages id="header.registerC" />
+                                                    </Button> 
+                                                :  <Button bsStyle="success" style={{backgroundColor:color2, borderColor:color2}}>
+                                                        <IntlMessages id="header.searchProperty"/>
+                                                    </Button>
+                                            }     
+                                            
                                             {(this.props.userLoggedIn) 
                                                 ? 
                                                 <Select defaultValue="Menú Usuario">
@@ -128,8 +156,8 @@ export default connect(state => ({
     isLoggedIn: state.Auth.idToken !== null ? true : false,
     show_section: state.App.section,
     userLoggedIn : (state.User.userLoggedIn && localStorage.getItem("id_token") !== null)? true : false,
-    userPageConfig: state.PageConfigReducer,
-}),{updateStatus, loggOutUser, checkLoginStatus})(Header);
+    userPageConfig: state.PageConfigReducer.user_page,
+}),{updateStatus, loggOutUser, checkLoginStatus, getPageInfo})(Header);
 
 
 const HeaderStyleWrapper = styled.div`
@@ -176,7 +204,10 @@ const HeaderStyleWrapper = styled.div`
         color:black !important;
     }
 
-    .selectItem {}
+    .color1 {
+        background-color: green !important;
+        border: 4px solid black !important
+    }
 
 `;
 

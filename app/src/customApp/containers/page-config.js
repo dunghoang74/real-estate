@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Input, Button, Icon } from 'antd';
+import { Row, Col, Input, Button, Icon, message } from 'antd';
 import { Button as ButtonB } from 'react-bootstrap';
 import Box from '../../components/utility/box';
 import LayoutWrapper from '../../components/utility/layoutWrapper.js';
@@ -11,10 +11,10 @@ import Dropzone from 'react-dropzone';
 import request from 'superagent';
 import {Image, Transformation} from 'cloudinary-react';
 import Notification from '../../components/notification';
-import { getUsernameFromUrl } from '../../../src/helpers/utility';
+import { getUsernameFromUrl, getPageResource } from '../../../src/helpers/utility';
 import { CompactPicker } from 'react-color';
 
-const {setupPage, getPageInfo, uploadLogo, uploadHeader, loading} = pageConfig;
+const {setupPage, getPageInfo, uploadLogo, uploadHeader, loading, uploadColors} = pageConfig;
 
 const CLOUDINARY_UPLOAD_PRESET = 'ew0v9j7f';
 const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/kazamap/upload';
@@ -27,6 +27,8 @@ class PageConfig extends Component {
 		loading: false,
 		page:null,
 		file:null,
+		color1: '#1890ff',
+		color2: '#5cb85c',
 	};
 
 	componentDidMount(){
@@ -34,6 +36,10 @@ class PageConfig extends Component {
 		this.props.getPageInfo(data._id);
 		this.props.loading('plus', 'logo');
 		this.props.loading('plus', 'header');
+
+		this.setState({color1:getPageResource('colors')[0].color1})
+		this.setState({color2:getPageResource('colors')[1].color2})
+
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -43,6 +49,12 @@ class PageConfig extends Component {
 				"Su session ha terminado. Porfavor Ingrese nuevamente.",
 			);
 			this.props.history.push('/' + getUsernameFromUrl() + '/signin');
+		}
+	}
+
+	componentDidUpdate(){
+		if(this.props.color_saved){
+			 message.info('El color se guardó satisfactoriamente.')
 		}
 	}
 
@@ -118,6 +130,31 @@ class PageConfig extends Component {
 		});
 	}
 
+	handleChangeColor1 = (color) => {
+		this.setState({ color1: color.hex });
+	}
+
+	handleChangeColor2 = (color) => {
+		this.setState({ color2: color.hex });
+	}
+
+	handleColors = () => {
+		const colors = {
+						color1:this.state.color1, 
+						color2:this.state.color2, 
+					   }
+		this.props.uploadColors(colors);
+	}
+
+	setColors = () => {
+
+		console.log('colors:::', getPageResource('colors'));
+		const colors =  getPageResource('colors');
+		
+		// this.setState({color1:colors[0].color1, color2:colors[1].color2});
+
+	}
+
 	render() {
 		const { colStyle, gutter } = basicStyle;
 
@@ -143,7 +180,7 @@ class PageConfig extends Component {
 											<td>
 												{!this.state.copied 
 												?
-													<Button style={{ float: "right" }} 
+													<Button style={{ float: "right"}} 
 															type="primary"
 															onClick={this.copyLink}
 													>Copiar URL</Button>
@@ -181,6 +218,7 @@ class PageConfig extends Component {
 					<Row gutter={gutter} justify="start">
 						<Col md={12} sm={12} xs={24} style={colStyle}>
 							<Box title="Añade tu Logo:" subtitle="En esta sección puedes añadir el logo de tu compañia, caso contrario saldrá el logo de Kazamap.com. Te recomendamos añadir el tuyo propio para darle identidad a tu página.">
+								<br/>
 								<table>
 									<tbody>
 										<tr>
@@ -199,7 +237,7 @@ class PageConfig extends Component {
 												</Dropzone>
 
 											</td>	
-											<td>
+											<td style={{paddingLeft:"10px"}}>
 												{	
 													(this.props.pageUserInfo !== null && 
 														this.props.pageUserInfo !== undefined &&
@@ -226,41 +264,40 @@ class PageConfig extends Component {
 											<td>
 											
 												<CompactPicker
-													// color={ this.state.background }
-													// onChangeComplete={ this.handleChangeComplete }
+													color={ this.state.color1 }
+													onChangeComplete={ this.handleChangeColor1 }
 												/>
 											</td>
 											<td style={{textAlign:"right"}}>
 											
 												<CompactPicker
-													// color={ this.state.background }
-													// onChangeComplete={ this.handleChangeComplete }
+													color={ this.state.color2 }
+													onChangeComplete={ this.handleChangeColor2 }
 												/>
 											</td>	
 										</tr>
 										<tr>
 											<td style={{ textAlign: "left" }} >
-											
-													{/* <Button className="exBtn"  
-															type="primary"
-															
-													>Boton Primer Color</Button> */}
-													<ButtonB bsStyle="primary" className="exBtn">
-														Boton Primer Color
-													</ButtonB>
+												<ButtonB bsStyle="primary" className="exBtn"
+															style={{backgroundColor:this.state.color1}} >
+													Boton Primer Color
+												</ButtonB>
 											</td>
 											<td style={{ textAlign: "right" }} >
-											
-													{/* <Button className="exBtn" 
-															type="primary"
-															onClick={this.copyLink}
-													>Boton Segundo Color</Button> */}
-													<ButtonB bsStyle="success" className="exBtn">
-														Boton Segundo Color
-													</ButtonB>
+												<ButtonB bsStyle="success" className="exBtn"
+															style={{backgroundColor:this.state.color2}} >
+													Boton Segundo Color
+												</ButtonB>
 											</td>
-
-										</tr>	
+										</tr>
+										<tr>
+											<td colSpan="2" style={{textAlign:"center"}}>
+												<br/>
+												<ButtonB bsStyle="danger" onClick={this.handleColors}>
+													Guardar Cambios
+												</ButtonB>
+											</td>	
+										</tr>		
 									</tbody>
 								</table>	
 
@@ -321,12 +358,14 @@ export default connect(
 		loading_logo:   state.PageConfigReducer.loading_logo,
 		loading_header: state.PageConfigReducer.loading_header,
 		token_expired:  state.PageConfigReducer.token_expired,
+		color_saved:    state.PageConfigReducer.color_saved,
 	}),
 	{setupPage, 
 	getPageInfo, 
 	uploadLogo,
 	loading,
 	uploadHeader,
+	uploadColors,
 	})(PageConfig);
 
 

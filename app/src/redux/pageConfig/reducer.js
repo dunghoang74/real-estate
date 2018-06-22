@@ -6,6 +6,7 @@ const initState = {
     loading_logo:'plus',
     loading_header:'plus',
     token_expired: null,
+    color_saved:null,
 };
 
 export default function PageConfigReducer(state = initState, action) {
@@ -25,6 +26,11 @@ export default function PageConfigReducer(state = initState, action) {
             return {
                 ...state,
                 token_expired: action.token_expired,
+            };
+        case actions.SAVED_COLORS:
+            return {
+                ...state,
+                color_saved: action.color_saved,
             };
         default:
             return state;

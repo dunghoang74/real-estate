@@ -2,11 +2,11 @@ import { all, takeEvery, put, fork } from 'redux-saga/effects';
 import actions from './actions';
 
 export function* userPageConfiguration() {    
-    yield takeEvery(actions.SETUP_PAGE_CONFIG, function* () { 
+    yield takeEvery(actions.SETUP_PAGE_CONFIG, function* () {});
+}
 
-
-        
-    });
+export function* savedColors() {    
+    yield takeEvery(actions.SAVED_COLORS, function* () { console.log('saved colors')});
 }
 
 // export function* tokenExpired(status) {
@@ -30,6 +30,6 @@ export function* userPageConfiguration() {
 export default function* rootSaga() {
     yield all([
         fork(userPageConfiguration),
-        // fork(tokenExpired),
+        fork(savedColors),
     ]);
 }

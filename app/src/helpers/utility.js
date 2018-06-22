@@ -98,3 +98,79 @@ export function getUsernameFromUrl() {
 export function getPageByUserId(userId){
 	return axios.get(`${uri}/api/page/${userId}`);
 }
+
+export function getPageResource(resource){
+
+	if(getUsernameFromUrl() === 'app'){
+		let colors = [];
+		switch(resource) {
+			case 'logo':
+				return config.upc.logo.public_id
+			case 'header':
+				return config.upc.header.public_id
+			case 'colors':
+				colors.push({color1:config.upc.color1})
+				colors.push({color2:config.upc.color2})
+				return colors
+			default:
+				return
+		}	
+	}
+
+	let upc = (sessionStorage.getItem('u_p')) ? JSON.parse(sessionStorage.getItem('u_p')) : null;
+
+	if(upc !== undefined && upc !== null)
+	{
+		if(resource === 'logo'){
+	
+			return (upc.logo !== undefined && upc.logo !== null && 
+					upc.logo.public_id !== undefined && upc.logo.public_id !== null) 
+					? 
+						upc.logo.public_id 
+					: 
+						config.upc.logo.public_id
+
+		}
+
+		if(resource === 'header'){
+			
+			return (upc.header !== undefined && upc.header !== null && 
+					upc.header.public_id !== undefined && upc.header.public_id !== null) 
+					? 
+						upc.header.public_id 
+					: 
+						config.upc.header.public_id
+
+		}
+
+		if(resource === 'colors'){
+			
+			let colors = [];
+			
+			if(upc.color1 !== undefined && upc.color1 !== null && 
+			   upc.color1 !== undefined && upc.color1 !== null) 
+			{
+				colors.push({color1:upc.color1})
+			}else{
+				colors.push({color2:config.upc.color1})
+			}
+
+			if(upc.color2 !== undefined && upc.color2 !== null && 
+				upc.color2 !== undefined && upc.color2 !== null) 
+			{
+				colors.push({color2:upc.color2})
+			}else{
+				colors.push({color2:config.upc.color2})
+			}
+
+			 return colors;
+
+		}
+
+
+
+	}
+	
+	
+
+}
