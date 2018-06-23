@@ -10,7 +10,7 @@ const createCategory = (req, res, next) => {
 
         category.save()
             .then(newCategory => {
-                res.status(200).send(newCategory)
+                res.status(201).send(newCategory)
             })
             .catch(err => {
                 res.status(500).send({error: "Something went wrong saving your category information", info: err});

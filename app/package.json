@@ -1,6 +1,6 @@
 {
-  "name": "isomorphic",
-  "version": "2.9.0",
+  "name": "kazamap",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "antd": "^3.0.3",
@@ -16,7 +16,6 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "enzyme-react-intl": "^1.4.8",
     "express": "^4.15.3",
-    "firebase": "^4.8.1",
     "fixed-data-table-2": "^0.8.8",
     "frappe-charts": "^0.0.8",
     "globalize": "^1.2.3",
@@ -89,8 +88,7 @@
     "smooth-scrollbar": "^8.2.5",
     "styled-components": "^2.2.1",
     "styled-theme": "^0.3.3",
-    "superagent": "^3.8.3",
-    "uppy": "0.18.0"
+    "superagent": "^3.8.3"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",

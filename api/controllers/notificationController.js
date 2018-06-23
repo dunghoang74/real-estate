@@ -6,7 +6,7 @@ const createNotification = (req, res, next) => {
 
     notification.save()
         .then(newNotification => {
-            res.status(200).send(newNotification)
+            res.status(201).send(newNotification)
         })
         .catch(err => {
             res.status(500).send({error: "Something went wrong saving your notification information", info: err});

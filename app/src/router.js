@@ -46,7 +46,7 @@ const PublicRoutes = ({ history, isLoggedIn }) => {
 				}
 			 }) 
 			.catch(err => { 
-				console.log(err.response)
+				console.log('error checkUsernameFromUrl::::', err, err.response)
 				// history.push('/app') 
 			});
 	}else{
@@ -116,4 +116,6 @@ const PublicRoutes = ({ history, isLoggedIn }) => {
 export default connect(state => ({
 	isLoggedIn: state.Auth.idToken !== null,
 }), {})(PublicRoutes);
+
+
 

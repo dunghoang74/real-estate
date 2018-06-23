@@ -5,7 +5,7 @@ const createProperty = (req, res, next) => {
 
     property.save()
         .then(newProperty => {
-            res.status(200).send(newProperty)
+            res.status(201).send(newProperty)
         })
         .catch(err => {
             res.status(500).send({error: "Something went wrong saving your property information", info: err});

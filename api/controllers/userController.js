@@ -33,7 +33,10 @@ const checkAvalability = (req, res) => {
 
     UserModel.findOne({username:userName})
         .populate('_page')
-        .then(resp => res.json(resp));
+        .then(resp => res.json(resp))
+        .catch(err => {
+            res.status(500).send({error: "Something went wrong checking user. Try again.", info: err});
+        });;
     
 };
 
