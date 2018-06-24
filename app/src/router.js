@@ -35,35 +35,20 @@ const PublicRoutes = ({ history, isLoggedIn, userPageConfig, is_user}) => {
 	if (!paths.includes(history.location.pathname)) {
 		// check if the user exist
 		// if no exist push to /app
+		console.log('isLoggedInvvv:::', isLoggedIn);
 		if(is_user === false){
-			history.push('/app');
+			// history.push('/app');
 		}else if(is_user){
 			console.log('userPageOCnfig:::', userPageConfig);
 			// this can be removed since is in the state already.
 			if(userPageConfig !== null){
 				sessionStorage.setItem('u_p', JSON.stringify(userPageConfig));
+			}else{
+				sessionStorage.removeItem('u_p')
 			}
 
 		}
 
-		// checkUsernameFromUrl()
-		// 	.then(({ data }) => { 
-		// 		if(data === null) {
-		// 			history.push('/app')
-		// 		}else {
-
-		// 			console.log('pdata.page:::', data._page);
-		// 			console.log('userPageConfig:::', userPageConfig);
-		// 			console.log('isLoggedIn:::', isLoggedIn);
-		// 			console.log('is_user:::', is_user);
-
-		// 			sessionStorage.setItem('u_p', JSON.stringify(data._page));
-		// 		}
-		// 	 }) 
-		// 	.catch(err => { 
-		// 		console.log('error checkUsernameFromUrl::::', err, err.response)
-		// 		history.push('/app') 
-		// 	});
 	}else{
 		sessionStorage.removeItem('u_p');
 	}

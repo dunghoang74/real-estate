@@ -99,9 +99,9 @@ export function getPageByUserId(userId){
 	return axios.get(`${uri}/api/page/${userId}`);
 }
 
-export function getPageResource(resource){
+export function getPageResource(resource, userPageConfig){
 
-	if(getUsernameFromUrl() === 'app'){
+	if(getUsernameFromUrl() === 'app' || userPageConfig === null){
 		let colors = [];
 		switch(resource) {
 			case 'logo':
@@ -143,29 +143,27 @@ export function getPageResource(resource){
 
 		}
 
-		if(resource === 'colors'){
-			
-			let colors = [];
+		if(resource === 'color1'){
 			
 			if(upc.color1 !== undefined && upc.color1 !== null) 
 			{
-				colors.push({color1:upc.color1})
+				return upc.color1
 			}else{
-				colors.push({color2:config.upc.color1})
+				return config.upc.color1
 			}
-
-			if(upc.color2 !== undefined && upc.color2 !== null) 
-			{
-				colors.push({color2:upc.color2})
-			}else{
-				colors.push({color2:config.upc.color2})
-			}
-
-			 return colors;
 
 		}
 
+		if(resource === 'color2'){
+			
+			if(upc.color2 !== undefined && upc.color2 !== null) 
+			{
+				return upc.color2
+			}else{
+				return config.upc.color2
+			}
 
+		}
 
 	}
 	

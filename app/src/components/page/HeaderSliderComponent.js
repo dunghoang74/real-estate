@@ -11,7 +11,7 @@ const { getPageInfo } = pageActions;
 class HeaderSlider extends Component {
     render() {
 
-        const headerImage = this.props.userPageConfig.header.public_id;
+        const headerImage = getPageResource('header', this.props.userPageConfig);
 
         return (
             <SliderStyle className="container">

@@ -41,9 +41,10 @@ class Header extends Component {
 
     render() {
         
-        let logo = this.props.userPageConfig.logo.public_id;
-        let color1 = this.props.userPageConfig.color1;
-        let color2 = this.props.userPageConfig.color2;
+        console.log('header user page config', this.props.userPageConfig);
+        let logo = getPageResource('logo', this.props.userPageConfig);
+        let color1 = getPageResource('color1', this.props.userPageConfig);
+        let color2 = getPageResource('color2', this.props.userPageConfig);
 
         return (
             <HeaderStyleWrapper className="container container-wrapper">
@@ -85,9 +86,9 @@ class Header extends Component {
                                                 ?  
                                                     <Button bsStyle="success" onClick={() => { this.handleShowRegistration() }} 
                                                             style={{backgroundColor:color2, borderColor:color2}}> 
-                                                        <IntlMessages id="header.registerC" />
+                                                         <IntlMessages id="header.registerC" />
                                                     </Button> 
-                                                :  <Button bsStyle="success" style={{backgroundColor:color2, borderColor:color2}}>
+                                                :   <Button bsStyle="success" style={{backgroundColor:color2, borderColor:color2}}>
                                                         <IntlMessages id="header.searchProperty"/>
                                                     </Button>
                                             }     

@@ -37,8 +37,8 @@ class PageConfig extends Component {
 		this.props.loading('plus', 'logo');
 		this.props.loading('plus', 'header');
 
-		this.setState({color1:getPageResource('colors')[0].color1})
-		this.setState({color2:getPageResource('colors')[1].color2})
+		this.setState({color1:getPageResource('color1', this.props.pageUserInfo)});
+		this.setState({color2:getPageResource('color2', this.props.pageUserInfo)});
 
 	}
 
@@ -148,11 +148,9 @@ class PageConfig extends Component {
 
 	setColors = () => {
 
-		console.log('colors:::', getPageResource('colors'));
-		const colors =  getPageResource('colors');
+		const color1 =  getPageResource('color1', this.props.pageUserInfo);
+		const color2 =  getPageResource('color2', this.props.pageUserInfo);
 		
-		// this.setState({color1:colors[0].color1, color2:colors[1].color2});
-
 	}
 
 	render() {
