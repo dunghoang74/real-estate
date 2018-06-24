@@ -16,9 +16,10 @@ const port = process.env.PORT || config.port_to_listen;
 server.use(helmet());
 server.use(express.json());
 
+
+
 // Adding Headers for requests.
-server.use(function (req, res, next) {
-    let  allowedOrigins = config.hosts;
+server.use((req, res, next) => {
     let  origin = req.headers.origin;
     if (allowedOrigins.indexOf(origin) > -1) {
         res.setHeader('Access-Control-Allow-Origin', origin);
