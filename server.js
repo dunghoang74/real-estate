@@ -20,15 +20,15 @@ server.use(express.json());
 
 // Adding Headers for requests.
 server.use( function(req, res, next) {
-    let  allowedOrigins = ['http://kazamap.com', 'http://gcomlnk.com'];
-    let  origin = req.headers.origin;
-    if (allowedOrigins.indexOf(origin) > -1) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
+    // let  allowedOrigins = ['http://kazamap.com', 'http://gcomlnk.com'];
+    // let  origin = req.headers.origin;
+    // if (allowedOrigins.indexOf(origin) > -1) {
+    //     res.setHeader('Access-Control-Allow-Origin', origin);
+    // }
+    res.setHeader('Access-Control-Allow-Origin', 'http://kazamap.com');
     res.setHeader('Access-Control-Allow-Headers', "Authorization, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
     res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, PATCH');
     res.setHeader('Access-Control-Allow-Credentials', true);
-
     next();
 });
 
