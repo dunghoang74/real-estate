@@ -20,7 +20,7 @@ server.use(express.json());
 
 // Adding Headers for requests.
 server.use( (req, res, next) => {
-    let  allowedOrigins = config.hosts;
+    let  allowedOrigins = ['http://kazamap.com:3000', 'http://gcomlnk.com:3001','http://kazamap.com'];
     let  origin = req.headers.origin;
     if (allowedOrigins.indexOf(origin) > -1) {
         res.setHeader('Access-Control-Allow-Origin', origin);
