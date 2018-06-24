@@ -7,6 +7,7 @@ const initState = {
     loading_header:'plus',
     token_expired: null,
     color_saved:null,
+    is_user:null,
 };
 
 export default function PageConfigReducer(state = initState, action) {
@@ -31,6 +32,16 @@ export default function PageConfigReducer(state = initState, action) {
             return {
                 ...state,
                 color_saved: action.color_saved,
+            };
+        case actions.PAGE_CONFIG:
+            return {
+                ...state,
+                user_page: action.user_page,
+            };
+        case actions.IS_USER:
+            return {
+                ...state,
+                is_user: action.is_user,
             };
         default:
             return state;

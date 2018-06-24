@@ -40,10 +40,10 @@ class Header extends Component {
     }
 
     render() {
-
-        let logo = getPageResource('logo');
-        let color1 = getPageResource('colors')[0].color1;
-        let color2 = getPageResource('colors')[1].color2;
+        
+        let logo = this.props.userPageConfig.logo.public_id;
+        let color1 = this.props.userPageConfig.color1;
+        let color2 = this.props.userPageConfig.color2;
 
         return (
             <HeaderStyleWrapper className="container container-wrapper">

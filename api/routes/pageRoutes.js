@@ -5,7 +5,9 @@ const jwt = require('../service/auth');
 
 // EndPoint: /api/page/
 
-appRouter.route('/:userId').get(pageController.getPage);
+appRouter.route('/username/:username').get(pageController.getPageByUserName);
+
+appRouter.route('/:userId').get(pageController.getPageByUserId);
 
 appRouter.route('/').post(pageController.createPage);
 

@@ -4,7 +4,6 @@ import { ConnectedRouter } from "react-router-redux";
 import { connect } from "react-redux";
 import App from "./containers/App/App";
 import asyncComponent from "./helpers/AsyncFunc";
-import Auth0 from "./helpers/auth0";
 import { checkUsernameFromUrl, getUsernameFromUrl } from '../src/helpers/utility';
 
 const RestrictedRoute = ({ component: Component, isLoggedIn, ...rest }) => (
@@ -24,7 +23,7 @@ const RestrictedRoute = ({ component: Component, isLoggedIn, ...rest }) => (
 		}
 	/>
 );
-const PublicRoutes = ({ history, isLoggedIn }) => {
+const PublicRoutes = ({ history, isLoggedIn, userPageConfig, is_user}) => {
 	const paths = ['/app', '/app/signin'];
 
 	if (history.location.pathname === '/') {
@@ -36,19 +35,35 @@ const PublicRoutes = ({ history, isLoggedIn }) => {
 	if (!paths.includes(history.location.pathname)) {
 		// check if the user exist
 		// if no exist push to /app
-		checkUsernameFromUrl()
-			.then(({ data }) => { 
-				if(data === null) {
-					history.push('/app')
-				}else {
-					console.log('pdata.page:::', data._page)
-					sessionStorage.setItem('u_p', JSON.stringify(data._page));
-				}
-			 }) 
-			.catch(err => { 
-				console.log('error checkUsernameFromUrl::::', err, err.response)
-				// history.push('/app') 
-			});
+		if(is_user === false){
+			history.push('/app');
+		}else if(is_user){
+			console.log('userPageOCnfig:::', userPageConfig);
+			// this can be removed since is in the state already.
+			if(userPageConfig !== null){
+				sessionStorage.setItem('u_p', JSON.stringify(userPageConfig));
+			}
+
+		}
+
+		// checkUsernameFromUrl()
+		// 	.then(({ data }) => { 
+		// 		if(data === null) {
+		// 			history.push('/app')
+		// 		}else {
+
+		// 			console.log('pdata.page:::', data._page);
+		// 			console.log('userPageConfig:::', userPageConfig);
+		// 			console.log('isLoggedIn:::', isLoggedIn);
+		// 			console.log('is_user:::', is_user);
+
+		// 			sessionStorage.setItem('u_p', JSON.stringify(data._page));
+		// 		}
+		// 	 }) 
+		// 	.catch(err => { 
+		// 		console.log('error checkUsernameFromUrl::::', err, err.response)
+		// 		history.push('/app') 
+		// 	});
 	}else{
 		sessionStorage.removeItem('u_p');
 	}
@@ -96,12 +111,12 @@ const PublicRoutes = ({ history, isLoggedIn }) => {
 					)}
 				/>
 
-				<Route
+				{/* <Route
 					path="/auth0loginCallback"
 					render={props => {
 						Auth0.handleAuthentication(props);
 					}}
-				/>
+				/> */}
 
 				<RestrictedRoute
 					path="/:username/dashboard"
@@ -115,6 +130,8 @@ const PublicRoutes = ({ history, isLoggedIn }) => {
 
 export default connect(state => ({
 	isLoggedIn: state.Auth.idToken !== null,
+	userPageConfig: state.PageConfigReducer.user_page,
+	is_user: state.PageConfigReducer.is_user,
 }), {})(PublicRoutes);
 
 

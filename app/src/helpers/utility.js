@@ -147,16 +147,14 @@ export function getPageResource(resource){
 			
 			let colors = [];
 			
-			if(upc.color1 !== undefined && upc.color1 !== null && 
-			   upc.color1 !== undefined && upc.color1 !== null) 
+			if(upc.color1 !== undefined && upc.color1 !== null) 
 			{
 				colors.push({color1:upc.color1})
 			}else{
 				colors.push({color2:config.upc.color1})
 			}
 
-			if(upc.color2 !== undefined && upc.color2 !== null && 
-				upc.color2 !== undefined && upc.color2 !== null) 
+			if(upc.color2 !== undefined && upc.color2 !== null) 
 			{
 				colors.push({color2:upc.color2})
 			}else{

@@ -13,6 +13,9 @@ const pageActions = {
     LOADING: 'LOADING',
     TOKEN_EXPIRED: 'TOKEN_EXPIRED',
     SAVED_COLORS:'SAVED_COLORS',
+    BOOT_PAGE_CONFIG:'BOOT_PAGE_CONFIG',
+    PAGE_CONFIG:'PAGE_CONFIG',
+    IS_USER:'IS_USER',
 
     setupPage: (page) => {
         return (dispatch) => {
@@ -23,6 +26,8 @@ const pageActions = {
             });
         }
     },
+
+    bootPageConfig: () => ({type: pageActions.BOOT_PAGE_CONFIG,}),
 
     getPageInfo:(userId) => {
         const pageInfo = axios.get(`${uri}/api/page/${userId}`);

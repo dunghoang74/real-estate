@@ -19,7 +19,31 @@ const createPage = (req, res, next) => {
 
 };
 
-const getPage = (req, res) => {
+const getPageByUserName = (req, res) => {
+    const userName = req.params.username;
+
+    UserModel.findOne({ username: userName})
+        .populate('_page')
+        .exec((err, resp) => {
+            if (err) return  res.status(500).send(err);
+            
+            if(resp === null){
+                res.status(404).send({response:resp, message:'Not user found', type:'user_not_found'});
+                return
+            }
+            
+            if(resp._page.length === 0){
+                res.status(404).send({response:resp, message:'Not page found', type:'page_not_found'});
+                return
+            }
+
+            // console.log(resp._page)
+            res.status(200).send(resp);
+            
+        });
+};
+
+const getPageByUserId = (req, res) => {
     const userId = req.params.userId;
 
     PageModel.find({ _user: userId})
@@ -178,13 +202,14 @@ const deletePage = (req, res) => {
 };
 
 module.exports = {createPage, 
-                getPage, 
+                getPageByUserName, 
                 updatePage, 
                 deletePage, 
                 uploadLogo, 
                 uploadHeader,
                 uploadColors,
                 addPageInUser,
+                getPageByUserId,
             };
 
 

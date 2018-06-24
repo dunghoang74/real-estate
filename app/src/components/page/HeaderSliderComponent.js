@@ -4,11 +4,14 @@ import styled from "styled-components";
 import {Image, Transformation} from 'cloudinary-react';
 import imageHome from '../../image/home01-min.jpeg';
 import { getPageResource } from '../../../src/helpers/utility';
+import pageActions from '../../redux/pageConfig/actions';
+
+const { getPageInfo } = pageActions;
 
 class HeaderSlider extends Component {
     render() {
 
-        const headerImage = getPageResource('header');
+        const headerImage = this.props.userPageConfig.header.public_id;
 
         return (
             <SliderStyle className="container">
@@ -38,7 +41,9 @@ class HeaderSlider extends Component {
         )}
     }
     
-export default connect(state => ({}),{})(HeaderSlider);
+export default connect(state => ({
+    userPageConfig: state.PageConfigReducer.user_page,
+}),{getPageInfo})(HeaderSlider);
 
 
 const SliderStyle = styled.div`
