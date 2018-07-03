@@ -15,7 +15,7 @@ export function* loginRequest() {
 
 		try{
 
-			const user = yield axios.post(`${uri}/api/user/sign_in`, {
+			const user = yield axios.post(`${uri}/api/v1/user/sign_in`, {
 				email: data.user.email,
 				password: data.user.password,
 			}, { withCredentials: true });

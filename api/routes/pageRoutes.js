@@ -3,7 +3,7 @@ const pageController = require('../controllers/pageController');
 let appRouter = express.Router();
 const jwt = require('../service/auth'); 
 
-// EndPoint: /api/page/
+// EndPoint: /api/v1/page/
 
 appRouter.route('/username/:username').get(pageController.getPageByUserName);
 

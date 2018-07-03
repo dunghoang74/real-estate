@@ -30,7 +30,7 @@ const pageActions = {
     bootPageConfig: () => ({type: pageActions.BOOT_PAGE_CONFIG,}),
 
     getPageInfo:(userId) => {
-        const pageInfo = axios.get(`${uri}/api/page/${userId}`);
+        const pageInfo = axios.get(`${uri}/api/v1/page/${userId}`);
 
         return (dispatch) => {
             pageInfo
@@ -61,7 +61,7 @@ const pageActions = {
                 withCredentials: true
         };
 
-        const upload = axios.post(`${uri}/api/page/upload-logo`, file, config )
+        const upload = axios.post(`${uri}/api/v1/page/upload-logo`, file, config )
         
         return (dispatch) => {
 
@@ -121,7 +121,7 @@ const pageActions = {
                 withCredentials: true
         };
 
-        const upload = axios.post(`${uri}/api/page/upload-header`, file, config )
+        const upload = axios.post(`${uri}/api/v1/page/upload-header`, file, config )
         
         return (dispatch) => {
 
@@ -168,7 +168,7 @@ const pageActions = {
             withCredentials: true
         };
 
-        const upload = axios.post(`${uri}/api/page/upload-colors`, colors, config )
+        const upload = axios.post(`${uri}/api/v1/page/upload-colors`, colors, config )
         
         return (dispatch) => {
 

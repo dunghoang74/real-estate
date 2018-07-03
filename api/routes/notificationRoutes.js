@@ -2,7 +2,7 @@ const express = require('express');
 const notificationController = require('../controllers/notificationController');
 let appRouter = express.Router();
 
-// EndPoint: /api/notification/
+// EndPoint: /api/v1/notification/
 
 appRouter.route('/').get(notificationController.getNotifications);
 

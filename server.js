@@ -18,25 +18,24 @@ server.use(express.json());
 
 // Adding Headers for requests.
 server.use( function(req, res, next) {
-    let  allowedOrigins = ['http://kazamap.com', 'http://gcomlnk.com', 'http://localhost'];
+    let  allowedOrigins = ['http://kazamap.com', 'http://gcomlnk.com', 'http://localhost:3000'];
     let  origin = req.headers.origin;
     if (allowedOrigins.indexOf(origin) > -1) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     }
-    // res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Headers', "Authorization, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+    res.setHeader('Access-Control-Allow-Headers', "Authorization, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
     res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, PATCH');
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
 
 server.use(cookieParser());
-server.use('/api/user', userRoutes);
-server.use('/api/property', propertyRoutes);
-server.use('/api/property_unit', propertyUnitRoutes);
-server.use('/api/category', categoryRoutes);
-server.use('/api/notification', notificationRoutes);
-server.use('/api/page', pageRoutes);
+server.use('/api/v1/user', userRoutes);
+server.use('/api/v1/property', propertyRoutes);
+server.use('/api/v1/property_unit', propertyUnitRoutes);
+server.use('/api/v1/category', categoryRoutes);
+server.use('/api/v1/notification', notificationRoutes);
+server.use('/api/v1/page', pageRoutes);
 
 db.connectTo();
 

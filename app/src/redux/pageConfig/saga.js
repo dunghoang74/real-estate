@@ -21,7 +21,7 @@ export function* bootPageConfig() {
         if(userName !== 'app'){ 
 
             try{
-                const pageInfo = yield axios.get(`${uri}/api/page/username/${userName}`);
+                const pageInfo = yield axios.get(`${uri}/api/v1/page/username/${userName}`);
                 console.log('pageInfo:::', pageInfo.data._page);
 
                 yield put({

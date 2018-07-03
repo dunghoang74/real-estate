@@ -88,7 +88,7 @@ export function stringToPosetiveInt(value, defValue = 0) {
 export function checkUsernameFromUrl() {
 	const uri = config.end_point_uri;
 	const username = getUsernameFromUrl();
-	return  axios.get(`${uri}/api/user/check_avalability/${username}`);
+	return  axios.get(`${uri}/api/v1/user/check_avalability/${username}`);
 }
 
 export function getUsernameFromUrl() {
@@ -96,7 +96,7 @@ export function getUsernameFromUrl() {
 }
 
 export function getPageByUserId(userId){
-	return axios.get(`${uri}/api/page/${userId}`);
+	return axios.get(`${uri}/api/v1/page/${userId}`);
 }
 
 export function getPageResource(resource, userPageConfig){

@@ -3,7 +3,7 @@ const userController = require('../controllers/userController');
 let appRouter = express.Router();
 const jwt = require('../service/auth');
 
-// EndPoint: /api/user/
+// EndPoint: /api/v1/user/
 
 appRouter.route('/').get(userController.getUsers);
 

@@ -2,7 +2,7 @@ const express = require('express');
 const categoryController = require('../controllers/categoryController');
 let appRouter = express.Router();
 
-// EndPoint: /api/category/
+// EndPoint: /api/v1/category/
 
 appRouter.route('/').get(categoryController.getCategories);
 

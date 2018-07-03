@@ -2,7 +2,7 @@ const express = require('express');
 const propertyController = require('../controllers/propertyController');
 let appRouter = express.Router();
 
-// EndPoint: /api/property/
+// EndPoint: /api/v1/property/
 
 appRouter.route('/').get(propertyController.getProperties);
 

@@ -16,7 +16,7 @@ const userActions = {
     CHECK_USER_EXIST : 'CHECK_USER_EXIST',
 
     addUser: (user) => {
-        const newUser = axios.post(`${uri}/api/user`, {
+        const newUser = axios.post(`${uri}/api/v1/user`, {
         
             username:  user.username,
             email:     user.email,
@@ -87,7 +87,7 @@ const userActions = {
                         },withCredentials: true
                     };
                 
-                axios.post(`${uri}/api/user/validate_token`, null, config)
+                axios.post(`${uri}/api/v1/user/validate_token`, null, config)
                     .then((resp) => {
 
                         console.log("---VALID token---", resp);
@@ -132,7 +132,7 @@ const userActions = {
     },
     
     checkUserAvalability: (username) =>{
-        const User = axios.get(`${uri}/api/user/check_avalability/${username}`);
+        const User = axios.get(`${uri}/api/v1/user/check_avalability/${username}`);
         let userAvailable = true;
 
         return (dispatch) => {
@@ -157,7 +157,7 @@ const userActions = {
          };
     },
     checkUserEmailAvalability: (email) =>{
-        const User = axios.get(`${uri}/api/user/check_email_avalability/${email}`);
+        const User = axios.get(`${uri}/api/v1/user/check_email_avalability/${email}`);
         let userEmailAvailable = true;
 
         return (dispatch) => {
