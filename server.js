@@ -17,7 +17,7 @@ const https = require('https');
 
 const privateKey  = fs.readFileSync('/etc/nginx/ssl/kazamap.com.key', 'utf8');
 
-console.log('privateKey:::',privateKey);
+console.log('process:::',process);
 
 const port = process.env.PORT || config.port_to_listen;
 
