@@ -15,7 +15,7 @@ const fs = require('fs');
 const http = require('http');
 const https = require('https');
 
-const privateKey  = fs.readFileSync('etc/nginx/ssl/kazamap.com.key', 'utf8');
+const privateKey  = fs.readFileSync('/etc/nginx/ssl/kazamap.com.key', 'utf8');
 
 console.log('privateKey:::',privateKey);
 
