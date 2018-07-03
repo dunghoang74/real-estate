@@ -11,14 +11,24 @@ const notificationRoutes = require('./api/routes/notificationRoutes');
 const pageRoutes = require('./api/routes/pageRoutes');
 const config = require('./config');
 
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+
+const privateKey  = fs.readFileSync('etc/nginx/ssl/kazamap.com.key', 'utf8');
+
+console.log('privateKey:::',privateKey);
+
 const port = process.env.PORT || config.port_to_listen;
 
 server.use(helmet());
 server.use(express.json());
 
+
+
 // Adding Headers for requests.
-server.use( function(req, res, next) {
-    let  allowedOrigins = ['http://kazamap.com', 'http://gcomlnk.com', 'http://localhost:3000'];
+server.use( (req, res, next) => {
+    let  allowedOrigins = ['https://kazamap.com', 'http://gcomlnk.com', 'http://localhost:3000'];
     let  origin = req.headers.origin;
     if (allowedOrigins.indexOf(origin) > -1) {
         res.setHeader('Access-Control-Allow-Origin', origin);
@@ -38,7 +48,6 @@ server.use('/api/v1/notification', notificationRoutes);
 server.use('/api/v1/page', pageRoutes);
 
 db.connectTo();
-
 
 server.listen(port, () => {
     console.log(`Server listening on ${port}`);
