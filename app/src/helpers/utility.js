@@ -2,6 +2,8 @@ import { Map } from 'immutable';
 import axios from 'axios';
 import config from '../../src/config';
 
+console.log('config.end_point_uri', config.end_point_uri);
+
 const uri = config.end_point_uri;
 
 export function clearToken() {

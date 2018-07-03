@@ -13,6 +13,8 @@
     "clone": "^2.1.1",
     "cloudinary-react": "^1.0.6",
     "d3-shape": "^1.0.6",
+    "dotenv": "^6.0.0",
+    "dotenv-expand": "^4.2.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "enzyme-react-intl": "^1.4.8",
     "express": "^4.15.3",
@@ -88,7 +90,8 @@
     "smooth-scrollbar": "^8.2.5",
     "styled-components": "^2.2.1",
     "styled-theme": "^0.3.3",
-    "superagent": "^3.8.3"
+    "superagent": "^3.8.3",
+    "uppy": "0.18.0"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
@@ -102,9 +105,10 @@
     "redux-mock-store": "^1.2.3"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "REACT_APP_STAGE=dev react-app-rewired start",
     "build": "react-app-rewired --max_old_space_size=8192 build",
     "test": "react-app-rewired test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy:prod": "REACT_APP_STAGE=production npm run build"
   }
 }

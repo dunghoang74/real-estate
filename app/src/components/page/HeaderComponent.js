@@ -45,10 +45,9 @@ class Header extends Component {
         let logo = getPageResource('logo', this.props.userPageConfig);
         let color1 = getPageResource('color1', this.props.userPageConfig);
         let color2 = getPageResource('color2', this.props.userPageConfig);
-
+        
         return (
             <HeaderStyleWrapper className="container container-wrapper">
-            
                 <header className="header">
                     <div className="top-box">
                         <div className="container">
@@ -165,7 +164,8 @@ const HeaderStyleWrapper = styled.div`
     .logo{
         border:0px solid black;
         padding-top:4px;
-        padding-bottom:0px
+        padding-bottom:0px;
+        margin-bottom:10px;
     }
     .register-text{
         font-size:1em !important;
