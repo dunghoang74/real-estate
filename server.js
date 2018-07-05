@@ -1,7 +1,5 @@
-const express = require('express');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
-const app = express();
 const db = require('./db');
 const userRoutes = require('./api/routes/userRoutes');
 const propertyRoutes = require('./api/routes/propertyRoutes');
@@ -10,10 +8,11 @@ const categoryRoutes = require('./api/routes/categoryRoutes');
 const notificationRoutes = require('./api/routes/notificationRoutes');
 const pageRoutes = require('./api/routes/pageRoutes');
 const config = require('./config');
-
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
+const express = require('express');
+const app = express();
 
 const port = process.env.PORT || config.port_to_listen;
 
